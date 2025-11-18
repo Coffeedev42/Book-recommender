@@ -8,6 +8,9 @@ export const ContextProvider = ({ children }) => {
   const [searchError, setSearchError] = useState(false);
   const [closePopup, setClosePopup] = useState(true)
 
+  console.log(searchResult);
+  
+
   //-----main variables ---------------
 
   const [addedBooks, setAddedBooks] = useState([[]])
