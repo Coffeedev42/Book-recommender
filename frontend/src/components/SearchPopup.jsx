@@ -49,7 +49,7 @@ const SearchPopup = () => {
       { !closeSearchPopup && (
         <div
           ref={searchRef}
-          className="flex w-150 mt-18 overflow-y-auto h-100 bg-white
+          className="flex w-150   top-[40%] overflow-y-auto h-100 bg-white
         flex-col gap-4 border-2
      border-gray-300/50 shadow-md  rounded-[20px] absolute z-20 px-5 py-5 "
         >

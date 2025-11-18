@@ -5,20 +5,26 @@ import Plus from "../assets/plus.png";
 
 import Button from "./Button";
 import { Context } from "../context/ContextProvider";
-const BookBlockCard = ({ img, title, author, type, handleClick  }) => {
+const BookBlockCard = ({ img, title, author, type }) => {
 
-  const {addedBooks, setAddedBooks} = useContext(Context)
+  const { addedBooks, setAddedBooks } = useContext(Context)
+
+  const handleAdd = () => {
+    setAddedBooks(prev => [...prev, {
+      title: title,
+      author: author,
+      src: img
+    }])
+
+
+  }
+
   const handleDelete = () => {
-    setAddedBooks(addedBooks.map(book => {
-      book.title !== title 
-    }))
-
-    console.log(`deleted`);
-    
+    setAddedBooks(addedBooks.filter(book => book.title !== title))
   }
   return (
     <div
-    
+
       className={`flex ${type === "add" && `z-20`} 
       
     items-center pr-[20px] gap-[15px] pl-[10px] w-full h-[80px] py-[10px]
@@ -31,16 +37,18 @@ const BookBlockCard = ({ img, title, author, type, handleClick  }) => {
       />
 
       <div className="flex flex-col  ">
-        <h3 className="text-[#B9562D] text-[18px] max-w-80 inter-medium">
+        <h3 className="text-[#B9562D] text-[18px] max-w-100 inter-medium">
           {title ? (title.length > 50 ? `${title.slice(0, 30)}...` : title) : "a monster call"}
         </h3>
-        <p className="text-[#522614] text-[14px] max-w-full">{author ? (author.length > 0 ? author.join() : author) : "Patrick Ness"}</p>
+        <p className="text-[#522614] text-[14px] max-w-full">{author ? (author.length > 2 ? author.slice(0, 3)  : author.join()) : "Patrick Ness"}</p>
       </div>
 
       <div className="flex items-center justify-center ml-auto gap-2">
 
-      <Button type={type} handleOnclick={handleClick}
-       />
+        <Button type={type}
+         isAdded={addedBooks.some(book => book.title === title ? true : false)}
+          handleAdd={handleAdd} handleDelete={handleDelete}
+        />
       </div>
     </div>
   );

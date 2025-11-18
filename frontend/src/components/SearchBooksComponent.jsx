@@ -5,42 +5,23 @@ import axios from "axios";
 import { Context } from "../context/ContextProvider";
 const SearchBooksComponent = () => {
   // const [books, setBooks] = useState([]);
-  const [searchTerm, setSearchTerm] = useState([]);
   const { closeSearchPopup, setCloseSearchPopup } = useContext(Context);
   const { searchResult, setSearchResult } = useContext(Context);
   const { searchError, setSearchError } = useContext(Context);
   const {addedBooks, setAddedBooks} = useContext(Context)
-
-  try {
-    
-    useEffect(() => {
-      if (searchTerm === "") {
-        setCloseSearchPopup(true);
-      } else {
-        setCloseSearchPopup(false);
-      }
   
-      // console.log(`jmjj`);
-  
-      const fetchBooks = async () => {
-        if (searchTerm) {
-          await axios
-            .get(
-              `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-                searchTerm
-              )}`
-            )
-            .then((data) => setSearchResult(data.data.items))
-            
-        }
-      };
-      fetchBooks();
-    }, [searchTerm]);
-  } catch (error) {
-    setSearchError(true)
-  }
-
-  
+  const fetchBooks = async (term) => {
+    if (term !== "") {
+      await axios
+        .get(
+          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+            term
+          )}`
+        )
+        .then((data) => setSearchResult(data.data.items))
+        
+    }
+  };
 
   return (
     <div className="flex flex-col max-w-[550px] mt-10 max-h-full items-center justify-center">
@@ -62,14 +43,21 @@ const SearchBooksComponent = () => {
             placeholder="search books.."
             className="outline-0 text-[#522614] w-full "
             onChange={(e) => {
-              setSearchTerm(e.target.value);
+              if (e.target.value === "") {
+                setCloseSearchPopup(true);
+              } else {
+                setCloseSearchPopup(false);
+              }
+              // setSearchTerm(e.target.value);
+              fetchBooks(e.target.value)
+
+              
             }}
           />
           <img src={Search} className="h-[18px] ml-auto" alt="" />
         </div>
       </div>
       <div className="flex flex-col ">
-        <BookBlock items={[1, 2]} content={"Popular"} type={"add"} />
         <BookBlock items={addedBooks} content={"Added Books"} type={'trash'} />
       </div>
     </div>

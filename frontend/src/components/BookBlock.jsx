@@ -26,15 +26,17 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
           <img src={EyeClosed} className="h-[18px]" />
         </div>
       </div>
-      {!hide && (
+      { (
         <div
           className={`flex ${
             type === "add" && `z-10`
-          } flex-col h-[200px] overflow-y-auto
-            gap-[10px]  `}
+          } flex-col h-[300px] overflow-y-auto
+            gap-[10px]  ${hide && `opacity-0`}`}
         >
           {items.map((item, key) => (
-            <BookBlockCard key={key} title={item.title} author={item.author} type={type} img={sample} />
+            <BookBlockCard key={key} img={item.src}
+             title={item.title} author={item.author} 
+             type={type}  />
           ))}
         </div>
       )}
