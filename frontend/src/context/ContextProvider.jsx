@@ -3,24 +3,30 @@ import { createContext, useState } from "react";
 export const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-  const [closeSearchPopup, setCloseSearchPopup] = useState(true);
-  const [searchResult, setSearchResult] = useState([{title: 'vedor', author: 'dd'}]);
-  const [searchError, setSearchError] = useState(false);
+  
+  // element boolians
+  
   const [closePopup, setClosePopup] = useState(true)
-
+  const [closeSearchPopup, setCloseSearchPopup] = useState(true);
+  
+  //-----main variables ---------------
+  
+  const [searchResult, setSearchResult] = useState();
+  const [addedBooks, setAddedBooks] = useState([])
+  const [favGenres, setFavGenres] = useState([])
+  const [prefernces, setPreferences] = useState([])
   
 
-  //-----main variables ---------------
 
-  const [addedBooks, setAddedBooks] = useState([])
   const values = {
     closeSearchPopup,
     setCloseSearchPopup,
     searchResult,
     setSearchResult,
-    searchError, setSearchError,
     closePopup, setClosePopup,
-    addedBooks, setAddedBooks
+    addedBooks, setAddedBooks,
+    favGenres, setFavGenres,
+    prefernces, setPreferences
   };
   return <Context.Provider value={values}>{children}</Context.Provider>;
 };

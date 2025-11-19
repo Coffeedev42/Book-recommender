@@ -3,6 +3,7 @@ import BookBlockCard from "./BookBlockCard";
 import EyeClosed from "../assets/eye-closed.png";
 import sample from "../assets/whatever.jpg";
 import { Context } from "../context/ContextProvider";
+import {EyeClosedIcon, EyeIcon, User} from 'lucide-react'
 
 const BookBlock = ({ items, type, content, handleDelete }) => {
   const count = items.length;
@@ -22,8 +23,10 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
           onClick={() => setHide((h) => !h)}
           className="flex ml-auto items-center gap-[5px] justify-center w-max"
         >
-          <h3 className=" font-medium font-sans text-[#522614]">Hide</h3>
-          <img src={EyeClosed} className="h-[18px]" />
+          <h3 className=" font-medium font-sans text-[#522614]">{hide ? `Reveal` : `Hide`}</h3>
+          {
+            hide ? <EyeIcon size={20} className="text-[#522614]"/> : <EyeClosedIcon size={20} className="text-[#522614]"/>
+          }
         </div>
       </div>
       { (

@@ -9,6 +9,7 @@ const SearchBooksComponent = () => {
   const { searchResult, setSearchResult } = useContext(Context);
   const { searchError, setSearchError } = useContext(Context);
   const {addedBooks, setAddedBooks} = useContext(Context)
+
   
   const fetchBooks = async (term) => {
     if (term !== "") {
@@ -49,7 +50,14 @@ const SearchBooksComponent = () => {
                 setCloseSearchPopup(false);
               }
               // setSearchTerm(e.target.value);
-              fetchBooks(e.target.value)
+
+              try {
+                
+                fetchBooks(e.target.value)
+              } catch (error) {
+                console.log(`no connection!`);
+                
+              }
 
               
             }}

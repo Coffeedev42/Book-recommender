@@ -3,7 +3,7 @@ import BookSearchpage from "./pages/BookSearchpage";
 import BookCatergoryPage from "./pages/BookCatergoryPage";
 const App = () => {
   return (
-    <div className="flex w-screen  max-h-[100vh] inter-regular">
+    <div className="flex w-screen inter max-h-[100vh] inter-regular">
       
       <Routes>
         <Route path="/" element={<BookSearchpage />} />
