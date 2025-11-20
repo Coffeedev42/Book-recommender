@@ -8,14 +8,14 @@ import React, {
 import BookBlockCard from "./BookBlockCard";
 import { Context } from "../context/ContextProvider";
 import Placeholder from "../assets/book-placeholder.png";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, SearchIcon } from "lucide-react";
 const SearchPopup = () => {
   const { closeSearchPopup, setCloseSearchPopup } = useContext(Context);
   const { searchResult, setSearchResult } = useContext(Context);
+  const { initial, setInitial } = useContext(Context);
   const searchRef = useRef(null);
 
   const { addedBooks, setAddedBooks } = useContext(Context);
-  const {loading, setLoading} = useContext(Context)
 
   useEffect(() => {
     const handleClose = (e) => {
@@ -26,8 +26,6 @@ const SearchPopup = () => {
     };
 
     document.addEventListener("mousedown", handleClose);
-
-    setLoading("start")
 
     return () => document.removeEventListener("mousedown", handleClose);
   }, []);
@@ -71,10 +69,14 @@ const SearchPopup = () => {
                 border={true}
               />
             ))
-          ) : loading === "start" ? <div className="flex gap-4 w-full h-full items-center justify-center">
-            <Search className="text-[#B9562D]"/>
-            <p className="inter-medium text-xl text-[#B9562D]">Start Searching Books</p>
-          </div> : (
+          ) : initial ? (
+            <div className="flex w-full h-full items-center gap-4 justify-center">
+              <SearchIcon className="text-[#B9562D]" />
+              <p className="inter-medium text-2xl text-[#B9562D]">
+                Start Searching
+              </p>
+            </div>
+          ) : (
             <div className=" w-full h-full items-center justify-center flex">
               <Loader2 className="animate-spin text-[#B9562D]" />
             </div>

@@ -16,7 +16,7 @@ export const ContextProvider = ({ children }) => {
   const [prefernces, setPreferences] = useState([]);
   const [prefferdMood, setPrefferdMood] = useState("");
   const [booksLength, setBooksLength] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [initial, setInitial] = useState(false);
 
   //assets variales
 
@@ -53,7 +53,7 @@ export const ContextProvider = ({ children }) => {
     setBooksLengthList,
     prefferdMoodList,
     setPrefferdMoodList,
-    loading, setLoading
+    initial, setInitial
   };
   return <Context.Provider value={values}>{children}</Context.Provider>;
 };

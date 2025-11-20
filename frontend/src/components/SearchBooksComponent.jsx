@@ -11,12 +11,18 @@ const SearchBooksComponent = () => {
   const { searchResult, setSearchResult } = useContext(Context);
   const { searchError, setSearchError } = useContext(Context);
   const { addedBooks, setAddedBooks } = useContext(Context);
-  const {loading, setLoading} = useContext(Context)
+  const { initial, setInitial } = useContext(Context);
 
   const [searchInputImage, setSeacrchInputImage] = useState(true);
   const [serachTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    setInitial(true)
+  }, [])
+
   const fetchBooks = async (term) => {
+
+    setInitial(false)
     try {
       
       if (term !== "") {
@@ -30,8 +36,6 @@ const SearchBooksComponent = () => {
       }
     } catch (error) {
       
-    }finally{
-      setLoading(false)
     }
 
   };
@@ -61,6 +65,7 @@ const SearchBooksComponent = () => {
               setCloseSearchPopup(false);
               setSeacrchInputImage(false);
             }}
+            autoFocus
             placeholder="search books.."
             className="outline-0 text-[#522614]  w-full "
             onChange={(e) => {
@@ -83,7 +88,7 @@ const SearchBooksComponent = () => {
             setSearchTerm("")
           }}>
             {
-              serachTerm ? <X size={24} /> : <SearchIcon size={24} />
+              serachTerm ? <X size={24} color="#522614" /> : <SearchIcon size={24} color="#522614" />
             }
           </button>
         </div>
