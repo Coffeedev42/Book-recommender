@@ -35,7 +35,7 @@ const BookBlockCard = ({ img, title, author, type, border }) => {
       <img
         src={img}
         alt="book-img"
-        className=" h-[60px]  border border-gray-100 shadow-none  w-[45px] object-cover rounded-[10px]"
+        className=" h-[60px] p-1 border border-gray-300 shadow-none  w-[45px] object-cover rounded-[10px]"
       />
 
       <div className="flex flex-col  ">

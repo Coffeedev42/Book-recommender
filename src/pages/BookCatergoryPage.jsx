@@ -20,7 +20,7 @@ const BookCatergoryPage = () => {
         <FavGenreComponent />
         <SelectCatergoryComponent
           cats={prefferdMoodList}
-          label={`Preferrd Mood`}
+          label={`Preferred Mood`}
         />
         <SelectCatergoryComponent
           cats={booksLengthList}
