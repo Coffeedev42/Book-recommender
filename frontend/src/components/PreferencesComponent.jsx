@@ -7,6 +7,7 @@ const PreferencesComponent = ({cats}) => {
 
   const {prefernces, setPreferences} = useContext(Context)
 
+
   const handlePreference = (cat) => {
     setPreferences(prev => [...prev, cat])
 

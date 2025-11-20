@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import FavGenreCatogories from "../components/FavGenreCatogories";
-import FavGenreComponent from "../components/favGenreComponent";
+import FavGenreComponent from "../components/FavGenreComponent";
 import NavigateComponenet from "../components/NavigateComponenet";
 import PreferencesComponent from "../components/PreferencesComponent";
 import SelectCatergoryComponent from "../components/SelectCatergoryComponent";
+import { Context } from "../context/ContextProvider";
+import { useContext } from "react";
 
 const BookCatergoryPage = () => {
+  const {booksLengthList, setBooksLengthList} = useContext(Context)
+  const {prefferdMoodList, setPrefferdMoodList} = useContext(Context)
   return (
     <div
       className="flex bg-[url('./assets/cover.png')] w-[100vw] bg-cover bg-no-repeat
@@ -15,11 +19,11 @@ const BookCatergoryPage = () => {
       <div className="flex flex-col justify-center gap-[24px]  max-w-[700px]">
         <FavGenreComponent />
         <SelectCatergoryComponent
-          cats={["Motivation", "Peaceful", "Tense", "Sympathetic"]}
+          cats={prefferdMoodList}
           label={`Preferrd Mood`}
         />
         <SelectCatergoryComponent
-          cats={["Short (Under 200 pages)", "Medium (Under 400)", 'Long (400+ pages)']}
+          cats={booksLengthList}
           label={`Books Length`}
         />
         <PreferencesComponent cats={["No Violence", "No Woke", "No LGBTQ+"]} />

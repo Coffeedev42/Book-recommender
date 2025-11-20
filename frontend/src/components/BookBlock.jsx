@@ -12,7 +12,7 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
 
   return (
     <div
-      className={`flex flex-col gap-[10px] w-[500px] 
+      className={`flex flex-col  relative gap-[10px] w-[500px] 
       `}
     >
       <div className="flex w-full">
@@ -31,16 +31,17 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
       </div>
       { (
         <div
-          className={`flex ${
+          className={`bg-linear-50 flex    ${
             type === "add" && `z-10`
           } flex-col h-[300px] overflow-y-auto
-            gap-[10px]  ${hide && `opacity-0`}`}
-        >
+          gap-[10px]  ${hide && `opacity-0`}`}
+          >
           {items.map((item, key) => (
             <BookBlockCard key={key} img={item.src}
-             title={item.title} author={item.author} 
-             type={type}  />
+            title={item.title} author={item.author} 
+            type={type}  />
           ))}
+
         </div>
       )}
     </div>

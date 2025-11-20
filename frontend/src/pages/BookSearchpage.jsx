@@ -16,7 +16,6 @@ const BookSearchpage = () => {
     items-center  justify-center  "
     >
       <NavigateComponenet step={1} />
-      <SearchPopup />
       <SearchBooksComponent />
 
     <div className="flex absolute bottom-5">

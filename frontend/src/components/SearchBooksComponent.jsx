@@ -3,25 +3,37 @@ import Search from "../assets/search.png";
 import BookBlock from "./BookBlock";
 import axios from "axios";
 import { Context } from "../context/ContextProvider";
+import SearchPopup from "./SearchPopup";
+import { SearchIcon, X } from "lucide-react";
 const SearchBooksComponent = () => {
   // const [books, setBooks] = useState([]);
   const { closeSearchPopup, setCloseSearchPopup } = useContext(Context);
   const { searchResult, setSearchResult } = useContext(Context);
   const { searchError, setSearchError } = useContext(Context);
-  const {addedBooks, setAddedBooks} = useContext(Context)
+  const { addedBooks, setAddedBooks } = useContext(Context);
+  const {loading, setLoading} = useContext(Context)
 
-  
+  const [searchInputImage, setSeacrchInputImage] = useState(true);
+  const [serachTerm, setSearchTerm] = useState("");
+
   const fetchBooks = async (term) => {
-    if (term !== "") {
-      await axios
-        .get(
-          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-            term
-          )}`
-        )
-        .then((data) => setSearchResult(data.data.items))
-        
+    try {
+      
+      if (term !== "") {
+        await axios
+          .get(
+            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+              term
+            )}`
+          )
+          .then((data) => setSearchResult(data.data.items));
+      }
+    } catch (error) {
+      
+    }finally{
+      setLoading(false)
     }
+
   };
 
   return (
@@ -36,13 +48,21 @@ const SearchBooksComponent = () => {
           favourites.
         </p>
       </div>
-      <div className="flex flex-col  w-[500px] py-[20px]">
-        <div className="flex shadow-lg w-full px-[20px] bg-white  h-[48px] items-center border border-[#522614] rounded-[60px]">
+      <div className="flex flex-col relative w-full py-[20px]">
+        <div
+          className="flex shadow-lg w-full
+           px-[20px] bg-white  h-[48px] items-center justify-center
+        border border-[#522614] gap-[20px] rounded-[60px]"
+        >
           <input
             type="text"
-            autoFocus
+            value={serachTerm}
+            onFocus={() => {
+              setCloseSearchPopup(false);
+              setSeacrchInputImage(false);
+            }}
             placeholder="search books.."
-            className="outline-0 text-[#522614] w-full "
+            className="outline-0 text-[#522614]  w-full "
             onChange={(e) => {
               if (e.target.value === "") {
                 setCloseSearchPopup(true);
@@ -50,23 +70,28 @@ const SearchBooksComponent = () => {
                 setCloseSearchPopup(false);
               }
               // setSearchTerm(e.target.value);
+              setSearchTerm(e.target.value);
 
               try {
-                
-                fetchBooks(e.target.value)
+                fetchBooks(e.target.value);
               } catch (error) {
                 console.log(`no connection!`);
-                
               }
-
-              
             }}
           />
-          <img src={Search} className="h-[18px] ml-auto" alt="" />
+          <button className="cursor-pointer" onClick={() => {
+            setSearchTerm("")
+          }}>
+            {
+              serachTerm ? <X size={24} /> : <SearchIcon size={24} />
+            }
+          </button>
         </div>
+        <SearchPopup />
       </div>
+
       <div className="flex flex-col ">
-        <BookBlock items={addedBooks} content={"Added Books"} type={'trash'} />
+        <BookBlock items={addedBooks} content={"Added Books"} type={"trash"} />
       </div>
     </div>
   );

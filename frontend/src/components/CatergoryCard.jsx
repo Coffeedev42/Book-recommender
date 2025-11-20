@@ -19,7 +19,7 @@ const CatergoryCard = ({cat, handleAddCat}) => {
              prefernces.includes(cat) && <Check size={18}/>
            }
         </div>
-            <p className='text-[#522614]'>{cat}</p>
+            <p onClick={() => handleAddCat(cat)} className='text-[#522614]'>{cat}</p>
     </div>
   )
 }
