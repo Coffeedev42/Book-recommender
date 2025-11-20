@@ -19,15 +19,6 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
         <h3 className="text-[18px] text-[#B9562D] inter-medium">
           {content} {`(${count})`}
         </h3>
-        <div
-          onClick={() => setHide((h) => !h)}
-          className="flex ml-auto items-center gap-[5px] justify-center w-max"
-        >
-          <h3 className=" font-medium font-sans text-[#522614]">{hide ? `Reveal` : `Hide`}</h3>
-          {
-            hide ? <EyeIcon size={20} className="text-[#522614]"/> : <EyeClosedIcon size={20} className="text-[#522614]"/>
-          }
-        </div>
       </div>
       { (
         <div
