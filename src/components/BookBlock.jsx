@@ -27,11 +27,16 @@ const BookBlock = ({ items, type, content, handleDelete }) => {
           } flex-col h-[300px] overflow-y-auto
           gap-[10px]  ${hide && `opacity-0`}`}
           >
-          {items.map((item, key) => (
+          {
+          items.length > 0 ? 
+          items.map((item, key) => (
             <BookBlockCard key={key} img={item.src}
             title={item.title} author={item.author} 
             type={type}  />
-          ))}
+          )) : <div className="flex bg-white p-5 rounded-xl  border border-gray-200">
+            <p className="inter-medium text-lg text-[#522614] ">Start adding books through searching</p>
+          </div>
+        }
 
         </div>
       )}

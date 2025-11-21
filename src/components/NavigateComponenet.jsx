@@ -1,6 +1,6 @@
 import React from "react";
-
-const NavigateComponenet = ({ step }) => {
+import NavigationButton from "./NavigationButton";
+const NavigateComponenet = ({ step, path }) => {
 
   const steps = [1, 2, 3]
   const NavigateBeads = ({ passed }) => {
@@ -19,8 +19,16 @@ const NavigateComponenet = ({ step }) => {
 
 
   return (
-    <div className="flex w-full fixed top-0 h-max  items-center justify-center ">
-      <div className="bg-[#B9562D] px-5 pt-3 pb-4  rounded-b-3xl  flex items-center justify-center text-white">
+    <>
+    
+    
+    
+      {
+        step > 1 &&
+      <NavigationButton path={path}/>
+      }
+      <div className="bg-[#B9562D] px-5 pt-3 pb-4 absolute top-0 rounded-b-3xl  flex items-center 
+      justify-center text-white">
         <div className="flex items-center justify-center gap-[12px] relative">
           {
             steps.map((s, i) => (
@@ -30,7 +38,7 @@ const NavigateComponenet = ({ step }) => {
           <div className="flex w-full h-0.5 bg-[#E19F84] absolute "></div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

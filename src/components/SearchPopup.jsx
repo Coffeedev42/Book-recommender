@@ -69,13 +69,6 @@ const SearchPopup = () => {
                 border={true}
               />
             ))
-          ) : initial ? (
-            <div className="flex w-full h-full items-center gap-4 justify-center">
-              <SearchIcon className="text-[#B9562D]" />
-              <p className="inter-medium text-2xl text-[#B9562D]">
-                Start Searching
-              </p>
-            </div>
           ) : (
             <div className=" w-full h-full items-center justify-center flex">
               <Loader2 className="animate-spin text-[#B9562D]" />

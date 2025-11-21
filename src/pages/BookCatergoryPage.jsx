@@ -6,6 +6,7 @@ import PreferencesComponent from "../components/PreferencesComponent";
 import SelectCatergoryComponent from "../components/SelectCatergoryComponent";
 import { Context } from "../context/ContextProvider";
 import { useContext } from "react";
+import NavigationButton from "../components/NavigationButton";
 
 const BookCatergoryPage = () => {
   const {booksLengthList, setBooksLengthList} = useContext(Context)
@@ -15,7 +16,8 @@ const BookCatergoryPage = () => {
       className="flex bg-[url('./assets/cover.png')] w-[100vw] bg-cover bg-no-repeat
      items-center justify-center flex-col gap- h-[100vh] "
     >
-      <NavigateComponenet step={2} />
+  
+      <NavigateComponenet step={2} path={`/`} />
       <div className="flex flex-col justify-center gap-[24px]  max-w-[700px]">
         <FavGenreComponent />
         <SelectCatergoryComponent
@@ -30,7 +32,7 @@ const BookCatergoryPage = () => {
       </div>
 
       <div className="flex absolute bottom-5">
-        <Link to={`/catergory`}>
+        <Link to={`/signin`}>
           <div
             className="flex cursor-pointer   hover:scale-110 transition-all  text-white
        w-[80px] h-[80px] items-center justify-center p-5 bg-[#B9562D] rounded-full"

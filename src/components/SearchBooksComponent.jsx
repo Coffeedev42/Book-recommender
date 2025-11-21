@@ -62,7 +62,10 @@ const SearchBooksComponent = () => {
             type="text"
             value={serachTerm}
             onFocus={() => {
-              setCloseSearchPopup(false);
+              if(serachTerm !== ""){
+
+                setCloseSearchPopup(false);
+              }
               setSeacrchInputImage(false);
             }}
             autoFocus
