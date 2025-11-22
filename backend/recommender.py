@@ -122,7 +122,7 @@ def compute_total_score(book: RankedBook, weights=None):
 # ⭐ MAIN ENTRY POINT
 # ============================================================
 
-def get_recommendations(user_profile: dict, count: int = 5):
+def get_recommendations(user_profile: dict, count: int = 5, scrape=False):
     ranked = generate_ranked_recommendations(user_profile, top_k=count)
 
     if isinstance(ranked, dict) and "error" in ranked:
@@ -132,16 +132,17 @@ def get_recommendations(user_profile: dict, count: int = 5):
     for book in ranked:
         book.total_score = compute_total_score(book)
 
-    for book in ranked:
-        try:
-            if not isinstance(book.scrape_data, dict) or book.scrape_data is None:
-                book.scrape_data = {}  # ensure dict exists
+    if(scrape):
+        for book in ranked:
+            try:
+                if not isinstance(book.scrape_data, dict) or book.scrape_data is None:
+                    book.scrape_data = {}  # ensure dict exists
 
-            sarasavi_scraped_books = sarasavi(book.title)
-            book.scrape_data["sarasavi"] = sarasavi_scraped_books if sarasavi_scraped_books else []
-        except Exception as e:
-            logger.warning(f"Sarasavi scraping failed for '{book.title}': {e}")
-            book.scrape_data["sarasavi"] = []
+                sarasavi_scraped_books = sarasavi(book.title)
+                book.scrape_data["sarasavi"] = sarasavi_scraped_books if sarasavi_scraped_books else []
+            except Exception as e:
+                logger.warning(f"Sarasavi scraping failed for '{book.title}': {e}")
+                book.scrape_data["sarasavi"] = []
 
 
     # Sort by total_score

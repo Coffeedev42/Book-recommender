@@ -61,9 +61,6 @@ def get_user_credit(user_id: str):
     Returns: (balance: int, message: str)
     """
     user = session.query(User).filter_by(id=user_id).first()
-
-    if not user:
-        return False, "User not found"
     
     return user.credit_limit
 

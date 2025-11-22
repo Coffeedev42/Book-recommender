@@ -165,7 +165,7 @@ def recommend():
         return jsonify({"error": "Not enough credits"}), 400
 
     # 1 — Run the recommender
-    results = get_recommendations(profile, count)
+    results = get_recommendations(profile, count, scrape=False)
 
     # 2 — Check for failure
     if isinstance(results, dict) and "error" in results:
