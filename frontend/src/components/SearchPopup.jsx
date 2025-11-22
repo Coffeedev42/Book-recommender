@@ -1,18 +1,11 @@
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
-import BookBlockCard from "./BookBlockCard";
+import { useContext, useEffect, useRef } from "react";
+import BookCard from "./BookCard";
 import { Context } from "../context/ContextProvider";
 import Placeholder from "../assets/book-placeholder.png";
-import { Loader2, Search, SearchIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 const SearchPopup = () => {
   const { closeSearchPopup, setCloseSearchPopup } = useContext(Context);
   const { searchResult, setSearchResult } = useContext(Context);
-  const { initial, setInitial } = useContext(Context);
   const searchRef = useRef(null);
 
   const { addedBooks, setAddedBooks } = useContext(Context);
@@ -21,7 +14,6 @@ const SearchPopup = () => {
     const handleClose = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setCloseSearchPopup(true);
-        console.log(`clciked`);
       }
     };
 
@@ -29,8 +21,6 @@ const SearchPopup = () => {
 
     return () => document.removeEventListener("mousedown", handleClose);
   }, []);
-
-  // console.log(searchResult);
 
   const handleClick = (book) => {
     setAddedBooks((prev) => [
@@ -40,8 +30,6 @@ const SearchPopup = () => {
         author: book.volumeInfo?.authors,
       },
     ]);
-
-    console.log(addedBooks);
   };
   return (
     <>
@@ -55,10 +43,9 @@ const SearchPopup = () => {
         >
           {searchResult ? (
             searchResult.map((r, i) => (
-              <BookBlockCard
+              <BookCard
                 handleClick={() => handleClick(r)}
                 key={i}
-                type={"add"}
                 title={r.volumeInfo?.title}
                 author={r.volumeInfo?.authors}
                 img={
@@ -66,7 +53,7 @@ const SearchPopup = () => {
                     ? r.volumeInfo?.imageLinks.thumbnail
                     : Placeholder
                 }
-                border={true}
+                bordered={true}
               />
             ))
           ) : (
