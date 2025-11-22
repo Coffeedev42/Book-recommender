@@ -4,7 +4,7 @@ const SiginToggleComponent = ({setMethod, selected}) => {
 
   const ToggleButton = ({method}) => {
     return(
-      <h2  onClick={() => setMethod(method)} className={`flex curdor-pointer
+      <h2 onClick={() => setMethod(method)} className={`flex cursor-pointer
       w-max px-20 p-2 inter-medium text-xl text-[#522614] items-center justify-center ${method === selected && `relative 
      after:content-[""] after:bg-[#B9562D]   after:absolute after:w-[60%] after:p-[3px]
       after:rounded-full after:-bottom-1`} `}>{method}</h2>
