@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Search from "../assets/search.png";
-import BookBlock from "./BookBlock";
+
 import axios from "axios";
+
 import { Context } from "../context/ContextProvider";
 import SearchPopup from "./SearchPopup";
 import { SearchIcon, X } from "lucide-react";
+import BookContainer from "./BookContainer";
 const SearchBooksComponent = () => {
     // const [books, setBooks] = useState([]);
     const { closeSearchPopup, setCloseSearchPopup } = useContext(Context);
@@ -98,7 +100,7 @@ const SearchBooksComponent = () => {
             </div>
 
             <div className="flex flex-col ">
-                <BookBlock
+                <BookContainer
                     items={addedBooks}
                     content={"Added Books"}
                     type={"trash"}

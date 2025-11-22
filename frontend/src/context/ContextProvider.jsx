@@ -7,6 +7,7 @@ export const ContextProvider = ({ children }) => {
 
   const [closePopup, setClosePopup] = useState(true);
   const [closeSearchPopup, setCloseSearchPopup] = useState(true);
+  const [hidePopup, setHidePopup] = useState(true);
 
   //-----main variables ---------------
 
@@ -53,7 +54,10 @@ export const ContextProvider = ({ children }) => {
     setBooksLengthList,
     prefferdMoodList,
     setPrefferdMoodList,
-    initial, setInitial
+    initial,
+    setInitial,
+    hidePopup,
+    setHidePopup,
   };
   return <Context.Provider value={values}>{children}</Context.Provider>;
 };

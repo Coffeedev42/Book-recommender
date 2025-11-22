@@ -1,26 +1,16 @@
-import React, { useContext, useState } from "react";
-import Plus from "../assets/plus.png";
-import Trash from "../assets/trash-2.png";
-import { Context } from "../context/ContextProvider";
-const Button = ({ type, handleAdd, handleDelete, isAdded }) => {
-  const { addedBooks, setAddedBooks } = useContext(Context)
-
+function Button({ type = "primary", icon, label, onClick }) {
+  const styles = {
+    primary:
+      "bg-[var(--primary)] text-white p-2 cursor-pointer active:bg-[var(--primary)]/90 rounded-full",
+    secondary:
+      "bg-white border w-max active:bg-gray-200/90 cursor-pointer border-[var(--primary)] text-[var(--primary)] p-2 rounded-full",
+  };
   return (
-    <div
-    
-      className={`h-[48px] w-[48px]  flex ml-auto  cursor-pointer items-center justify-center rounded-full ${type == "add"
-          && `bg-[#B9562D]   `
-      
-        } ${isAdded && `bg-white hoveer:bg-white/90 border border-[#B9562D]`}`}
-    >
-      {type == "add" && !isAdded ?  (
-        <img   onClick={handleAdd} src={Plus} className="h-full p-2.5 " />
-        
-      ) : (
-        <img onClick={handleDelete} src={Trash} className=" h-full p-2.5" alt="" />
-      )}
-    </div>
+    <button className={styles[type]} onClick={onClick}>
+      {icon}
+      {label}
+    </button>
   );
-};
+}
 
 export default Button;
