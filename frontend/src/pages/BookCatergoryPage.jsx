@@ -38,8 +38,8 @@ const BookCatergoryPage = () => {
 
     const GetRecommendations = async () => {
         try {
-            const URL = "http://localhost:5000/dummy-recommend";
-            // const URL = "http://localhost:5000/recommend";
+            // const URL = "http://localhost:5000/dummy-recommend";
+            const URL = "http://localhost:5000/recommend";
             const response = await axios.post(URL, recommendationValues, {
                 withCredentials: true,
             });

@@ -21,28 +21,24 @@ CORS(app,
      supports_credentials=True,
      origins=["http://localhost:5173"])
 
-# -------------------------------
+
 # Home Route
-# -------------------------------
 @app.route("/", methods=["GET"])
 def home():
     """Simple health check to ensure the server is running."""
     return "<h1>Server Running...</h1>", 200
 
 
+# Dashbaord Route
 @app.route("/dashboard")
 def dashboard():
     user = get_current_user()
-
-    # User must be logged in
     if not user:
-        return "You are not logged in!"
+        return jsonify({"authenticated": False}), 401
 
-    # User must be admin
     if not user.admin:
         return "You are not allowed here!"
 
-    # ----- Metrics -----
     metrics = {
         "total_users": session.query(User).count()
     }
@@ -50,27 +46,21 @@ def dashboard():
     return jsonify(metrics), 200
 
 
-# -------------------------------
+
 # Register Route
-# -------------------------------
 @app.route("/register", methods=["POST"])
 def register():
-    """
-    Register a new user.
-    Request JSON: { "name": str, "email": str, "password": str, "admin": bool (optional) }
-    Response: success or error message
-    """
     data = request.json or {}
+
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
-    admin = data.get("admin", False)  # default to False if not provided
-    verified = data.get("verified", False)  # default to False if not provided
+    admin = data.get("admin", False)  # Remove this in productions
+    verified = data.get("verified", False) # Remove this in productions
 
     if not (name and email and password):
         return jsonify({"error": "Missing required fields"}), 400
 
-    # Call your db function and pass the admin flag
     success, message = register_user(name, email, password, admin=admin, verified=verified)
 
     if success:
@@ -78,16 +68,10 @@ def register():
     return jsonify({"error": message}), 400
 
 
-# -------------------------------
+
 # Login Route
-# -------------------------------
 @app.route("/login", methods=["POST"])
 def login():
-    """
-    Login an existing user.
-    Request JSON: { "email": str, "password": str }
-    Response: user info on success, error on failure
-    """
     data = request.json or {}
     email = data.get("email")
     password = data.get("password")
@@ -111,7 +95,7 @@ def login():
             "credit_limit": user.credit_limit
         }))
 
-        cookies_expires_at = datetime.now(timezone.utc) + timedelta(days=2)
+        cookies_expires_at = datetime.now(timezone.utc) + timedelta(days=5)
         resp.set_cookie(
             "user_id",
             cookie_value,
@@ -124,6 +108,7 @@ def login():
     return jsonify({"error": user_or_message}), 400
 
 
+# Check if logged in
 @app.route("/auth/check", methods=["GET"])
 def auth_check():
     user = get_current_user()
@@ -131,6 +116,7 @@ def auth_check():
         return jsonify({"authenticated": True}), 200
     return jsonify({"authenticated": False}), 401
 
+# Logout
 @app.route("/logout", methods=["POST"])
 def logout():
     resp = make_response(jsonify({"message": "Logged out"}))
@@ -144,13 +130,13 @@ def logout():
     return resp, 200
 
 
-# -------------------------------
+
 # Recommendations Route
-# -------------------------------
 @app.route("/recommend", methods=["POST"])
 def recommend():
     data = request.json
 
+    # Check if user is authenticated
     user = get_current_user()
     if not user:
         return jsonify({"authenticated": False}), 401
@@ -163,7 +149,6 @@ def recommend():
 
     # Check if enough credit to proceed
     credit_balance = user.credit_limit
-
     if(not credit_balance >= credit_cost):
         return jsonify({"error": "Not enough credits"}), 400
 
@@ -191,8 +176,28 @@ def recommend():
         "results": [r.model_dump() for r in results]
     })
 
+# Dummy Recommender For Testing
 @app.route("/dummy-recommend", methods=["POST"])
 def dummy_recommend():
+
+    data = request.json
+
+    # Check if user is authenticated
+    user = get_current_user()
+    if not user:
+        return jsonify({"authenticated": False}), 401
+
+    profile = data.get("profile")
+    count = data.get("rec_count")
+
+    # Calculate credit cost
+    credit_cost = count * 5
+
+    # Check if enough credit to proceed
+    credit_balance = user.credit_limit
+    if(not credit_balance >= credit_cost):
+        return jsonify({"error": "Not enough credits"}), 400
+
     results = [
         {
             "author": "Alex Michaelides",
@@ -298,16 +303,10 @@ def dummy_recommend():
     })
 
 
-# -------------------------------
-# Get All Lists for a User
-# -------------------------------
+
+# Get All Book Lists for a User
 @app.route("/lists", methods=["GET"])
 def get_lists():
-    """
-    Fetch all book lists for a user.
-    Query Params: user_id (int)
-    Response: { list_name: [book_ids] }
-    """
     user = get_current_user()
     if not user:
         return jsonify({"authenticated": False}), 401
@@ -315,16 +314,11 @@ def get_lists():
     lists = get_user_lists(user)
     return jsonify(lists), 200
 
-# -------------------------------
-# Create a New Book List
-# -------------------------------
+
+
+# Create a New Book List for a user
 @app.route("/lists", methods=["POST"])
 def create_new_list():
-    """
-    Create a new book list for a user.
-    Request JSON: { user_id: int, list_name: str }
-    Response: success message and list ID
-    """
     data = request.json or {}
     
     user = get_current_user()
@@ -337,17 +331,14 @@ def create_new_list():
         return jsonify({"error": "user and list_name are required"}), 400
 
     new_list = create_list(user, list_name)
-    return jsonify({"message": f"List '{list_name}' created.", "list_id": new_list.id}), 200
+    return jsonify({"success": True, "list_name": list_name, "list_id": new_list.id}), 200
 
-# -------------------------------
+
 # Add Book to a List
-# -------------------------------
 @app.route("/lists/add", methods=["POST"])
 def add_book():
     """
-    Add a Book To A User List
     Request JSON: { 
-        user: obj, 
         list_name: str, 
         list_id: str, 
         book: {
@@ -359,7 +350,6 @@ def add_book():
             summary: str,
         } 
     }
-    Response: success message
     """
     data = request.json or {}
 
@@ -371,85 +361,69 @@ def add_book():
     list_id = data.get("list_id")
     book = data.get("book")
 
-    if not (user and list_id and book and list_name):
+    if not (user and list_name and list_id and book):
         return jsonify({"error": "user, list_name, list_id, and book are required"}), 400
 
 
     add_book_to_list(user, list_name, list_id, book)
-    return jsonify({"message": f"Book '{book['title']}' added to list '{list_name}'"}), 200
+    return jsonify({"success": True, "message" :  f"added to list {list_name}"}), 200
 
-# -------------------------------
+
 # Remove Book from a List
-# -------------------------------
 @app.route("/lists/remove", methods=["POST"])
 def remove_book():
-    """
-    Remove a Google Book ID from a user's list.
-    Request JSON: { user_id: int, list_name: str, book_id: str }
-    Response: success message
-    """
     data = request.json or {}
-    user_id = data.get("user_id")
-    list_name = data.get("list_name")
-    book_id = data.get("book_id")
-    if not (user_id and list_name and book_id):
-        return jsonify({"error": "user_id, list_name, and book_id are required"}), 400
-    try:
-        user_id = str(user_id)
-    except ValueError:
-        return jsonify({"error": "Invalid user_id"}), 400
 
-    remove_book_from_list(user_id, list_name, book_id)
-    return jsonify({"message": f"Book '{book_id}' removed from list '{list_name}'"}), 200
+    user = get_current_user()
+    if not user:
+        return jsonify({"authenticated": False}), 401
+    
+    list_id = data.get("list_id")
+    book = data.get("book")
 
-# -------------------------------
+    if not (user and list_id and book):
+        return jsonify({"error": "user, list_id, and book are required"}), 400
+
+    remove_book_from_list(user, list_id, book)
+    return jsonify({"success": True, "message" :  f"removed from list {list_id}"}), 200
+
+
 # Get All Books from a List
-# -------------------------------
 @app.route("/lists/books", methods=["GET"])
 def list_books():
-    """
-    Fetch all Google Book IDs from a user's list.
-    Query Params: user_id (int), list_name (str)
-    Response: list of book IDs
-    """
-    user_id = request.args.get("user_id")
-    list_name = request.args.get("list_name")
-    if not user_id or not list_name:
-        return jsonify({"error": "user_id and list_name are required"}), 400
-    try:
-        user_id = str(user_id)
-    except ValueError:
-        return jsonify({"error": "Invalid user_id"}), 400
+    user = get_current_user()
+    if not user:
+        return jsonify({"authenticated": False}), 401
+    
+    list_id = request.args.get("list_id")
+    if not user or not list_id:
+        return jsonify({"error": "user and list_id are required"}), 400
 
-    books = get_books_from_list(user_id, list_name)
+    books = get_books_from_list(user, list_id)
     return jsonify(books), 200
 
-# -------------------------------
+
 # Delete a Book List
-# -------------------------------
 @app.route("/lists/delete", methods=["POST"])
 def delete_book_list():
-    """
-    Delete a user's book list completely.
-    Request JSON: { user_id: int, list_name: str }
-    Response: success or error message
-    """
     data = request.json or {}
-    user_id = data.get("user_id")
-    list_name = data.get("list_name")
 
-    if not (user_id and list_name):
-        return jsonify({"error": "user_id and list_name are required"}), 400
-    try:
-        user_id = str(user_id)
-    except ValueError:
-        return jsonify({"error": "Invalid user_id"}), 400
+    user = get_current_user()
+    if not user:
+        return jsonify({"authenticated": False}), 401
+    
+    list_id = data.get("list_id")
 
-    success = delete_list(user_id, list_name)
+    if not (user and list_id):
+        return jsonify({"error": "user, list_id, and book are required"}), 400
+
+    success = delete_list(user, list_id)
     if success:
-        return jsonify({"message": f"List '{list_name}' deleted successfully"}), 200
-    return jsonify({"error": f"List '{list_name}' not found"}), 404
+        return jsonify({"success": True, "message" :  f"Deleted list {list_id}"}), 200
 
-# -------------------------------
+    return jsonify({"error": f"List '{list_id}' not found"}), 404
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -4,9 +4,14 @@ from typing import List, Optional
 import json
 from scraper import sarasavi
 import logging
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Init Gemini Client
-client = genai.Client(api_key="AIzaSyDpuOxaeT2h2RqlJMTUphQ5iCTB9tPLj4I")
+client = genai.Client(api_key=API_KEY)
 
 # Logging
 logging.basicConfig(level=logging.INFO)
@@ -20,6 +25,7 @@ class RankedBook(BaseModel):
     title: str
     author: str
     genre: list
+    published_year: int
     summary: str
     why_it_matches: str
     similarity_to_liked_books: str
@@ -34,10 +40,6 @@ class RankedBook(BaseModel):
 
 class RankedResults(BaseModel):
     books: List[RankedBook]
-
-# ============================================================
-# ⭐ SINGLE-STAGE RECOMMENDATION GENERATOR
-# ============================================================
 
 def generate_ranked_recommendations(user_profile: dict, top_k: int = 5):
     schema = RankedResults.model_json_schema()
@@ -64,6 +66,7 @@ def generate_ranked_recommendations(user_profile: dict, top_k: int = 5):
     - title
     - author
     - genre
+    - published_year
     - summary
     - why_it_matches
     - similarity_to_liked_books
@@ -78,7 +81,7 @@ def generate_ranked_recommendations(user_profile: dict, top_k: int = 5):
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-flash-lite",
             contents=prompt,
             config={
                 "response_mime_type": "application/json",
@@ -115,7 +118,7 @@ def compute_total_score(book: RankedBook, weights=None):
         book.theme_match * weights["theme_match"]
     )
 
-    return round(total, 4)
+    return round(total, 2)
 
 
 # ============================================================

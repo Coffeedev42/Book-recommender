@@ -1,9 +1,6 @@
 from db_config import session, UserBookList, User
 
-# -----------------------------
 # Book List Functions
-# -----------------------------
-
 def create_list(user, list_name: str):
     """Create a new list for a user if it doesn't exist."""
     existing = session.query(UserBookList).filter_by(user_id=user.id, list_name=list_name).first()
@@ -14,7 +11,7 @@ def create_list(user, list_name: str):
     session.commit()
     return new_list
 
-# WOOOOOOORKS
+
 def add_book_to_list(user, list_name: str, list_id: str, book: dict):
     """Add full book data to a user's list."""
     user_list = session.query(UserBookList).filter_by(id=list_id, user_id=user.id).first()
@@ -29,59 +26,74 @@ def add_book_to_list(user, list_name: str, list_id: str, book: dict):
     session.commit()
 
 
-def remove_book_from_list(user_id: str, list_name: str, book_id: str):
-    """Remove a book from a user's list."""
-    user_list = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
-    if user_list and book_id in user_list.book_ids:
-        user_list.book_ids.remove(book_id)
-        session.commit()
+def remove_book_from_list(user, list_id: str, book: dict):
+    user_list = session.query(UserBookList).filter_by(id=list_id, user_id=user.id).first()
+    if not user_list or not user_list.books:
+        return
+
+    # Remove by matching title + author (safer than dict eq)
+    user_list.books = [
+        b for b in user_list.books
+        if not (b.get("title") == book.get("title") and b.get("author") == book.get("author"))
+    ]
+
+    session.commit()
+
 
 def get_user_lists(user):
-    """Return all lists of a user as a dictionary {list_name: [book_ids]}."""
     lists = session.query(UserBookList).filter_by(user_id=user.id).all()
-    return [{"list_id": l.id, "list_name": l.list_name, "books": l.books} for l in lists]
 
-def get_books_from_list(user_id: str, list_name: str):
-    """Return all Google Books IDs from a user's list (frontend will fetch details)."""
-    user_list = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
+    result = []
+    for l in lists:
+        result.append({
+            "list_id": str(l.id), # ensure string
+            "list_name": l.list_name,
+            "books": l.books or [], # never return None
+            "book_count": len(l.books or [])
+        })
+
+    return result
+
+
+def get_books_from_list(user, list_id: str):
+    user_list = session.query(UserBookList).filter_by(
+        user_id=user.id,
+        id=list_id
+    ).first()
+
     if not user_list:
         return []
-    return user_list.books if user_list else []
 
-def delete_list(user_id: str, list_name: str):
-    """Delete a user's book list completely."""
-    user_list = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
-    if user_list:
-        session.delete(user_list)
-        session.commit()
-        return True
-    return False
+    return user_list.books or []
 
 
-# -----------------------------
+def delete_list(user, list_id: str):
+    user_list = session.query(UserBookList).filter_by(
+        user_id=user.id,
+        id=list_id
+    ).first()
+
+    if not user_list:
+        return False
+
+    session.delete(user_list)
+    session.commit()
+    return True
+
+
 # Credit Functions
-# -----------------------------
 def get_user_credit(user_id: str):
-    """
-    Get's the available credit balance for user
-    Returns: (balance: int, message: str)
-    """
     user = session.query(User).filter_by(id=user_id).first()
-    
     return user.credit_limit
 
 
 def deduct_user_credit(user, amount: int = 20):
-    """
-    Deduct credit from a user.
-    Returns: (success: bool, message: str)
-    """
     # Admins do not consume credits
     if user.admin:
         return True, "Admin accounts do not consume credits"
 
     if user.credit_limit < amount:
-        return False, "Insufficient credits"
+        return False, "Insufficient credits. Please purchase"
 
     # Deduct credit
     user.credit_limit -= amount
@@ -91,9 +103,6 @@ def deduct_user_credit(user, amount: int = 20):
 
 
 def add_user_credit(user_id: str, amount: int):
-    """
-    Add credits to a user's account (for top-ups or rewards).
-    """
     user = session.query(User).filter_by(id=user_id).first()
     if not user:
         return {"error": "User not found"}

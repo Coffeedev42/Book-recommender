@@ -5,13 +5,8 @@ from config import serializer
 
 
 def register_user(name, email, password, admin=False, verified=False):
-    """
-    Registers a new user.
-    admin: bool, default False
-    """
-    # Basic validation
     if not (name and email and password):
-        return False, "Missing fields"
+        return False, "Missing email or password fields"
 
     # Normalize email
     email = email.strip().lower()
@@ -19,24 +14,27 @@ def register_user(name, email, password, admin=False, verified=False):
     # Check if user already exists
     existing_user = session.query(User).filter_by(email=email).first()
     if existing_user:
-        return False, "User already exists"
+        return False, f"User {email} already exists"
 
     # Hash password
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-    # Create new user with optional admin flag
+    # Create new user
     new_user = User(name=name, email=email, password=hashed_pw, admin=admin, verified=verified)
     session.add(new_user)
     session.commit()
 
-    return True, "User registered successfully"
+    return True, f"User {email} registered successfully"
 
 
 def login_user(email, password):
     if not (email and password):
         return False, "Missing fields"
 
+    # Normalize email
     email = email.strip().lower()
+
+    # Check if user exists
     user = session.query(User).filter_by(email=email).first()
     if not user:
         return False, "Invalid email or password"
@@ -47,6 +45,7 @@ def login_user(email, password):
     return True, user
 
 
+# Check if a valid user is authenticated
 def get_current_user():
     cookie_value = request.cookies.get("user_id")
     if not cookie_value:
