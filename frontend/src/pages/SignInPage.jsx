@@ -15,7 +15,7 @@ const SigninPage = () => {
         email: "",
         password: "",
         comfirm_password: "",
-        admin: true,
+        admin: false,
     });
 
     const [loginValues, setLoginValues] = useState({
