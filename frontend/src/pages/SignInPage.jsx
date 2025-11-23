@@ -126,7 +126,7 @@ const SigninPage = () => {
               <Input
                 value={registerValues.password}
                 placeholder={`Create a password`}
-                type={"password"}
+                secure={true}
                 onChange={(e) => {
                   setRegisterValues({
                     ...registerValues,
@@ -136,7 +136,7 @@ const SigninPage = () => {
               />
               <Input
                 placeholder={`Confirm password`}
-                type={"password"}
+                secure={true}
                 onChange={(e) => {
                   setRegisterValues({
                     ...registerValues,
@@ -145,7 +145,7 @@ const SigninPage = () => {
                 }}
               />
 
-              <Button onClick={handleRegister} label={"Login"} />
+              <Button onClick={handleRegister} label={"Register"} />
             </>
           )}
         </form>

@@ -5,9 +5,11 @@ import SearchPopup from "../components/SearchPopup";
 import { Context } from "../context/ContextProvider";
 import { Link } from "react-router-dom";
 import LogoutButton from "../components/LogoutButton";
+import PageNavigator from "../components/PageNavigator";
 
 const BookSearchPage = () => {
   const { addedBooks, setAddedBooks } = useContext(Context);
+  const { searchResult, setSearchResult } = useContext(Context);
 
   return (
     <div
@@ -21,16 +23,9 @@ const BookSearchPage = () => {
       <SearchBooksComponent />
 
       <div className="flex absolute bottom-5">
-        {
-          <Link to={`/category`}>
-            <div
-              className="flex cursor-pointer   hover:scale-110 transition-all  text-white
-       w-[80px] h-[80px] items-center justify-center p-5 bg-[#B9562D] rounded-full"
-            >
-              <p className="text-lg">Next</p>
-            </div>
-          </Link>
-        }
+        {addedBooks && addedBooks.length > 2 && (
+          <PageNavigator path={`/category  `} />
+        )}
       </div>
     </div>
   );

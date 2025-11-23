@@ -31,6 +31,18 @@ const SearchPopup = () => {
       },
     ]);
   };
+
+  const isValidBook = (book) => {
+    const validPrintType = book.volumeInfo.printType === "BOOK";
+    const hasAuthors = book.volumeInfo.authors;
+    const hasISBN =
+      book.volumeInfo.industryIdentifiers &&
+      book.volumeInfo.industryIdentifiers[0].type
+        .toLowerCase()
+        .includes("isbn");
+
+    return validPrintType && hasAuthors && hasISBN;
+  };
   return (
     <>
       {!closeSearchPopup && (
@@ -42,20 +54,23 @@ const SearchPopup = () => {
      border-gray-300/50 shadow-md  rounded-[20px]  z-20 px-5 py-5 "
         >
           {searchResult ? (
-            searchResult.map((r, i) => (
-              <BookCard
-                handleClick={() => handleClick(r)}
-                key={i}
-                title={r.volumeInfo?.title}
-                author={r.volumeInfo?.authors}
-                img={
-                  r.volumeInfo?.imageLinks
-                    ? r.volumeInfo?.imageLinks.thumbnail
-                    : Placeholder
-                }
-                bordered={true}
-              />
-            ))
+            searchResult.map(
+              (r, i) =>
+                isValidBook(r) && (
+                  <BookCard
+                    handleClick={() => handleClick(r)}
+                    key={i}
+                    title={r.volumeInfo?.title}
+                    author={r.volumeInfo?.authors}
+                    img={
+                      r.volumeInfo?.imageLinks
+                        ? r.volumeInfo?.imageLinks.thumbnail
+                        : Placeholder
+                    }
+                    bordered={true}
+                  />
+                )
+            )
           ) : (
             <div className=" w-full h-full items-center justify-center flex">
               <Loader2 className="animate-spin text-[#B9562D]" />

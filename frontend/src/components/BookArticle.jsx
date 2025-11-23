@@ -38,6 +38,7 @@ const ActionButton = ({ icon, label, onclick, type }) => {
 
 const Paragraph = ({ topic, text }) => {
   const [hideText, setHideText] = useState(false);
+
   return (
     <div className="flex flex-col gap-[8px]  ">
       <div className="flex items-center gap-[5px] h-max justify-center w-max">
@@ -85,7 +86,7 @@ const BookArticle = ({
     setHidePopup(false);
   };
   return (
-    <div className="flex flex-col border-b pb-30 border-[var(--secondary)]/20 w-full max-h-[550px]  max-w-[1240px] gap-[18px] justify-center ">
+    <div className="flex flex-col border-b pb-30 border-[var(--secondary)]/20 w-full max-h-[550px]  max-w-[900px] gap-[18px] justify-center ">
       <div className="flex  gap-[15px]  w-max ">
         <img
           src={Sample}
@@ -94,16 +95,15 @@ const BookArticle = ({
         />
         <div className="flex flex-col justify-center gap-[16px] ">
           <div className="bg-[#00B330] items-center justify-center flex w-[45px] text-white h-[25px] rounded-sm">
-            <p className="text-[12px] ">9/10</p>
+            <p className="text-[12px] ">{ratings}</p>
           </div>
 
-          <p className="text-[20px] text-[var(--primary)]">
-            Looking for Alaska
-          </p>
-          <p className="text-[var(--secondary)]">John Green (1987)</p>
+          <p className="text-[20px] text-[var(--primary)]">{title}</p>
+          <p className="text-[var(--secondary)]">{author} (1987)</p>
           <div className="flex items-center justify-center w-max gap-[6px]">
-            <CategoryCard label={`Young Adults`} />
-            <CategoryCard label={`Young Adults`} />
+            {categories.map((c, i) => (
+              <CategoryCard label={c} />
+            ))}
           </div>
         </div>
       </div>
@@ -127,24 +127,12 @@ const BookArticle = ({
       </div>
 
       <div className="flex flex-col gap-[20px] ">
-        <Paragraph
-          topic={"Summary"}
-          text={
-            "Miles  Halter is obsessed with famous last words and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska.Miles  Halter is obsessed with famous last words and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska"
-          }
-        />
+        <Paragraph topic={"Summary"} text={summary} />
         <Paragraph
           topic={"Similarities to your liked books"}
-          text={
-            "Miles  Halter is obsessed with famous last words and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska.Miles  Halter is obsessed with famous last words and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska"
-          }
+          text={similarities}
         />
-        <Paragraph
-          topic={"Why you’ll like it"}
-          text={
-            "Miles  Halter is obsessed with famous last word and hell nah we go go helll oh way down we go go go ies and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska.Miles  Halter is obsessed with famous last words and leaves his safe home to attend a boarding school. There, he falls in love with the enigmatic and self destructive Alaska."
-          }
-        />
+        <Paragraph topic={"Why you’ll like it"} text={reason} />
       </div>
     </div>
   );

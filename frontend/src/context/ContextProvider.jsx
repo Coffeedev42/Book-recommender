@@ -8,6 +8,7 @@ export const ContextProvider = ({ children }) => {
   const [closePopup, setClosePopup] = useState(true);
   const [closeSearchPopup, setCloseSearchPopup] = useState(true);
   const [hidePopup, setHidePopup] = useState(true);
+  const [initial, setInitial] = useState(false);
 
   //-----main variables ---------------
 
@@ -17,7 +18,8 @@ export const ContextProvider = ({ children }) => {
   const [prefernces, setPreferences] = useState([]);
   const [prefferdMood, setPrefferdMood] = useState("");
   const [booksLength, setBooksLength] = useState("");
-  const [initial, setInitial] = useState(false);
+
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
 
   //assets variales
 
@@ -58,6 +60,8 @@ export const ContextProvider = ({ children }) => {
     setInitial,
     hidePopup,
     setHidePopup,
+    recommendedBooks,
+    setRecommendedBooks,
   };
   return <Context.Provider value={values}>{children}</Context.Provider>;
 };

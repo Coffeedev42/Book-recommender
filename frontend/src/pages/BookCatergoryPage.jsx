@@ -5,13 +5,48 @@ import NavigateComponenet from "../components/NavigateComponenet";
 import PreferencesComponent from "../components/PreferencesComponent";
 import SelectCatergoryComponent from "../components/SelectCatergoryComponent";
 import { Context } from "../context/ContextProvider";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import NavigationButton from "../components/NavigationButton";
 import LogoutButton from "../components/LogoutButton";
+import axios from "axios";
 
 const BookCatergoryPage = () => {
   const { booksLengthList, setBooksLengthList } = useContext(Context);
   const { prefferdMoodList, setPrefferdMoodList } = useContext(Context);
+  const { addedBooks, setAddedBooks } = useContext(Context);
+  const { favGenres, setFavGenres } = useContext(Context);
+  const { prefernces, setPreferences } = useContext(Context);
+  const { prefferdMood, setPrefferdMood } = useContext(Context);
+  const { booksLength, setBooksLength } = useContext(Context);
+
+  const { recommendedBooks, setRecommendedBooks } = useContext(Context);
+
+  const filteredTitles = addedBooks.map((b) => `${b.title} by ${b.author[0]}`);
+
+  const [recommendationValues, setrecommandationValue] = useState({
+    profile: {
+      likedBooks: filteredTitles,
+      favoriteGenres: favGenres,
+      preferences: prefernces,
+      prefferdMood: prefferdMood,
+      booksLength: booksLength,
+    },
+    rec_count: 5,
+  });
+
+  const GetRecommendations = async () => {
+    try {
+      const URL = "http://localhost:5000/recommend";
+      const response = await axios.post(URL, recommendationValues, {
+        withCredentials: true,
+      });
+
+      setRecommendedBooks(response.data);
+    } catch (error) {
+      console.error("generation failed:", error);
+    }
+  };
+
   return (
     <div
       className="flex bg-[url('./assets/cover.png')] w-[100vw] 
@@ -34,7 +69,7 @@ const BookCatergoryPage = () => {
       </div>
 
       <div className="flex absolute bottom-5">
-        <Link to={`/recommendations`}>
+        <Link onClick={GetRecommendations} to={`/recommendations`}>
           <div
             className="flex cursor-pointer   hover:scale-110 transition-all  text-white
        w-[80px] h-[80px] items-center justify-center p-5 bg-[#B9562D] rounded-full"
