@@ -4,24 +4,30 @@ from db_config import session, UserBookList, User
 # Book List Functions
 # -----------------------------
 
-def create_list(user_id: str, list_name: str):
+def create_list(user, list_name: str):
     """Create a new list for a user if it doesn't exist."""
-    existing = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
+    existing = session.query(UserBookList).filter_by(user_id=user.id, list_name=list_name).first()
     if existing:
         return existing
-    new_list = UserBookList(user_id=user_id, list_name=list_name, book_ids=[])
+    new_list = UserBookList(user_id=user.id, list_name=list_name, books=[])
     session.add(new_list)
     session.commit()
     return new_list
 
-def add_book_to_list(user_id: str, list_name: str, book_id: str):
-    """Add a book to a user's list (creates the list if missing)."""
-    user_list = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
+# WOOOOOOORKS
+def add_book_to_list(user, list_name: str, list_id: str, book: dict):
+    """Add full book data to a user's list."""
+    user_list = session.query(UserBookList).filter_by(id=list_id, user_id=user.id).first()
     if not user_list:
-        user_list = create_list(user_id, list_name)
-    if book_id not in user_list.book_ids:
-        user_list.book_ids.append(book_id)
-        session.commit()
+        user_list = create_list(user, list_name)
+
+    for b in user_list.books:
+        if b["title"] == book["title"] and b["author"] == book["author"]:
+            return 
+    
+    user_list.books.append(book)
+    session.commit()
+
 
 def remove_book_from_list(user_id: str, list_name: str, book_id: str):
     """Remove a book from a user's list."""
@@ -30,17 +36,17 @@ def remove_book_from_list(user_id: str, list_name: str, book_id: str):
         user_list.book_ids.remove(book_id)
         session.commit()
 
-def get_user_lists(user_id: str):
+def get_user_lists(user):
     """Return all lists of a user as a dictionary {list_name: [book_ids]}."""
-    lists = session.query(UserBookList).filter_by(user_id=user_id).all()
-    return {l.list_name: l.book_ids for l in lists}
+    lists = session.query(UserBookList).filter_by(user_id=user.id).all()
+    return [{"list_id": l.id, "list_name": l.list_name, "books": l.books} for l in lists]
 
 def get_books_from_list(user_id: str, list_name: str):
     """Return all Google Books IDs from a user's list (frontend will fetch details)."""
     user_list = session.query(UserBookList).filter_by(user_id=user_id, list_name=list_name).first()
     if not user_list:
         return []
-    return user_list.book_ids
+    return user_list.books if user_list else []
 
 def delete_list(user_id: str, list_name: str):
     """Delete a user's book list completely."""
@@ -65,15 +71,11 @@ def get_user_credit(user_id: str):
     return user.credit_limit
 
 
-def deduct_user_credit(user_id: str, amount: int = 20):
+def deduct_user_credit(user, amount: int = 20):
     """
     Deduct credit from a user.
     Returns: (success: bool, message: str)
     """
-    user = session.query(User).filter_by(id=user_id).first()
-    if not user:
-        return False, "User not found"
-    
     # Admins do not consume credits
     if user.admin:
         return True, "Admin accounts do not consume credits"

@@ -6,7 +6,7 @@ from scraper import sarasavi
 import logging
 
 # Init Gemini Client
-client = genai.Client(api_key="")
+client = genai.Client(api_key="AIzaSyDpuOxaeT2h2RqlJMTUphQ5iCTB9tPLj4I")
 
 # Logging
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class RankedBook(BaseModel):
     title: str
     author: str
-    genre: str
+    genre: list
     summary: str
     why_it_matches: str
     similarity_to_liked_books: str

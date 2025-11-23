@@ -3,6 +3,8 @@ from sqlalchemy import create_engine,Integer, Column, String, Boolean, JSON, Dat
 from sqlalchemy.dialects.postgresql import UUID  # optional if using Postgres
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, relationship
 from sqlalchemy.sql import func
+from sqlalchemy.ext.mutable import MutableList
+
 
 # -----------------------------
 # Database Setup
@@ -41,7 +43,7 @@ class UserBookList(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36), ForeignKey("users.id"))
     list_name = Column(String)
-    book_ids = Column(JSON, default=[])
+    books = Column(MutableList.as_mutable(JSON), default=list)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="lists")
