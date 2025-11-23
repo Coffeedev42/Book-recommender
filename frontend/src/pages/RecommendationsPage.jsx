@@ -12,7 +12,7 @@ const RecommendationsPage = () => {
 
     return (
         <div
-            className={`flex w-screen  h-full overflow-y-scroll py-[140px] gap-[120px]   items-center justify-center   flex-col `}
+            className={`flex w-screen  h-full overflow-y-scroll py-[140px] gap-10 items-center justify-center flex-col `}
         >
             <AddToListPopup />
             <div className="absolute left-[8rem] top-1">
@@ -29,6 +29,7 @@ const RecommendationsPage = () => {
                         reason={b.why_it_matches}
                         ratings={Math.round(b.total_score * 10) + `/10`}
                         categories={b.genre}
+                        publishedDate={b.published_year}
                     />
                 ))
             ) : (
