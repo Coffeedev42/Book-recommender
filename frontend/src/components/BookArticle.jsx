@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import Sample from "../assets/sample.png";
 import {
     BookMarked,
     BookOpenText,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { Context } from "../context/ContextProvider";
 import Button from "./Button";
+import CoverPlaceholder from "../assets/book-placeholder.png";
 
 const BookArticle = ({
     title,
@@ -112,7 +112,7 @@ const BookArticle = ({
     };
 
     return (
-        <div className="flex flex-col border-b pb-10 border-[var(--secondary)]/20 w-full max-h-[850px] max-w-[900px] gap-[18px] justify-center">
+        <div className="flex flex-col border-b py-10 border-[var(--secondary)]/20 w-full max-h-[850px] max-w-[900px] gap-[18px] justify-center">
             <div className="flex gap-[15px] w-max">
                 {/* Book Cover with Loader */}
                 <div className="relative h-[150px] w-[110px]">
@@ -126,9 +126,9 @@ const BookArticle = ({
                     )}
 
                     <img
-                        src={bookCover || (fetchDone ? Sample : "")}
+                        src={bookCover || (fetchDone ? CoverPlaceholder : null)}
                         alt="book-cover"
-                        className={`h-full w-full object-cover p-0.5 border border-[var(--stroke)] rounded-md ${
+                        className={`h-full w-full object-cover p-1 border border-[var(--stroke)] rounded-md ${
                             isLoadingCover ? "hidden" : "block"
                         }`}
                         onLoad={() => setIsLoadingCover(false)}
@@ -185,8 +185,8 @@ const BookArticle = ({
                     label="Available Stores"
                     icon={<Store size={24} />}
                 />
-
-                {/* {googleData.previewLink && (
+                {/* 
+                {googleData.previewLink && (
                     <Button
                         type="secondary"
                         label="Preview"
