@@ -1,14 +1,17 @@
 function Button({ type = "primary", icon, label, onClick, className }) {
     const styles = {
         primary:
-            "bg-[var(--primary)] text-white  cursor-pointer active:bg-[var(--primary)]/90 rounded-full",
+            "py-3 px-4 cursor-pointer bg-[#D55414] text-white active:bg-[#D55414]/90",
         secondary:
-            "bg-white border active:bg-gray-200/90 cursor-pointer border-[var(--primary)] text-[var(--primary)] p-2 rounded-full",
+            "py-3 px-4 cursor-pointer  bg-white border active:bg-gray-200/90  border-[#D55414] text-[#D55414] p-2",
+        disabled: "bg-gray-200 text-gray-400 p-2 cursor-not-allowed",
+        iconed: "cursor-pointer bg-[#D55414] text-white active:bg-[#D55414]/90",
+        iconed: "cursor-pointer bg-red-200 text-red-500",
     };
     return (
         <button
-            className={`flex item-center gap-2 py-3 px-4 justify-center text-nowrap ${styles[type]} ${className}`}
-            onClick={onClick}
+            className={`flex item-center gap-2 justify-center text-nowrap rounded-full ${styles[type]} ${className}`}
+            onClick={type !== "disabled" ? onClick : () => {}}
         >
             {icon}
             {label}

@@ -8,9 +8,13 @@ const ProtectedRoute = ({ children }) => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:5000/auth/check", {
-                withCredentials: true,
-            })
+            .post(
+                "http://localhost:5000/auth/check",
+                {},
+                {
+                    withCredentials: true,
+                }
+            )
             .then(() => setAuthState("authenticated"))
             .catch(() => setAuthState("unauthorized"));
     }, []);

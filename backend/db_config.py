@@ -29,7 +29,7 @@ class User(Base):
     verified = Column(Boolean, default=False)
     admin = Column(Boolean, default=False)
     avatar_url = Column(String, default="")
-    credit_limit = Column(Integer, default=100)
+    credit_limit = Column(Integer, default=300)
 
     lists = relationship("UserBookList", back_populates="user")
 

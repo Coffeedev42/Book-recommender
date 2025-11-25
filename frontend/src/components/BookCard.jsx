@@ -39,28 +39,27 @@ const BookCard = ({ img, title, author, btnType, bordered }) => {
 
     return (
         <div
-            className={`flex  
-      
-    items-center pr-[20px] gap-[15px] pl-[10px] w-full h-[80px] py-[10px]
-     rounded-[15px]  ${
-         bordered ? `border border-[#B9562D] ` : `border border-[#E9E9E9]`
-     } bg-white`}
+            className={`flex items-center p-2 pr-3 gap-[15px] w-full rounded-md  ${
+                bordered
+                    ? `border border-[#C24000] `
+                    : `border border-[#E9E9E9]`
+            } ${added ? "bg-gray-100/70" : "bg-white"}`}
         >
             <img
                 src={img}
                 alt="book-img"
-                className=" h-[60px] p-1 border border-gray-300 shadow-none  w-[45px] object-cover rounded-[10px]"
+                className=" h-[90px] w-[63px] border border-gray-300 shadow-none object-cover rounded-md "
             />
 
             <div className="flex flex-col  ">
-                <h3 className="text-[#B9562D] text-[18px] max-w-100 inter-medium">
+                <h3 className="text-[#C24000] text-md max-w-100 inter-medium">
                     {title
                         ? title.length > 50
                             ? `${title.slice(0, 30)}...`
                             : title
                         : "a monster call"}
                 </h3>
-                <p className="text-[#522614] text-[14px] max-w-full">
+                <p className="text-[#522614] text-sm max-w-full">
                     {author ? (
                         author
                     ) : (
@@ -71,8 +70,9 @@ const BookCard = ({ img, title, author, btnType, bordered }) => {
 
             <div className="flex items-center justify-center ml-auto gap-2">
                 <Button
+                    className="p-3"
                     onClick={addRemoveHandler}
-                    type={"primary"}
+                    type={"iconed"}
                     icon={added ? <Trash /> : <Plus />}
                 />
             </div>

@@ -19,6 +19,7 @@ export const ContextProvider = ({ children }) => {
     const [booksLength, setBooksLength] = useState("");
     const [activeBook, setActiveBook] = useState({});
     const [recommendedBooks, setRecommendedBooks] = useState([]);
+    const [profile, setProfile] = useState({});
 
     // Option lists
     const [favGenresList] = useState([
@@ -44,14 +45,12 @@ export const ContextProvider = ({ children }) => {
     ]);
 
     const [booksLengthList] = useState([
-        "Any length",
         "Short (Under 200 pages)",
         "Medium (Under 400)",
         "Long (400+ pages)",
     ]);
 
     const [preferredMoodList] = useState([
-        "No Preference",
         "Motivation",
         "Peaceful",
         "Inspirational",
@@ -77,6 +76,27 @@ export const ContextProvider = ({ children }) => {
         { label: "10 Books (100 Credits)", count: 10, credits: 80 },
     ];
     const [recCount, setRecCount] = useState(recCountList[0]);
+
+    // ✅ reset function
+    const resetContext = () => {
+        setClosePopup(true);
+        setCloseSearchPopup(true);
+        setHidePopup(true);
+        setInitial(false);
+        setSearchResult(undefined);
+        setSearchError(undefined);
+        setAddedBooks([]);
+        setFavGenres([]);
+        setConstraints([]);
+        setPreferredMood("");
+        setBooksLength("");
+        setActiveBook({});
+        setRecommendedBooks([]);
+        setProfile({});
+        setRecCount(recCountList[0]);
+        localStorage.clear(); // clear storage if you used it
+        sessionStorage.clear();
+    };
 
     const values = {
         closeSearchPopup,
@@ -112,6 +132,9 @@ export const ContextProvider = ({ children }) => {
         setRecommendedBooks,
         activeBook,
         setActiveBook,
+        profile,
+        setProfile,
+        resetContext, // ✅ add to context
     };
 
     return <Context.Provider value={values}>{children}</Context.Provider>;

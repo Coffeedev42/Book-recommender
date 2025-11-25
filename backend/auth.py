@@ -4,8 +4,8 @@ import bcrypt
 from config import serializer
 
 
-def register_user(name, email, password, admin=False, verified=False):
-    if not (name and email and password):
+def register_user(name, email, password, avatar_url, admin=False, verified=False):
+    if not (name and email and password and avatar_url):
         return False, "Missing email or password fields"
 
     # Normalize email
@@ -20,7 +20,7 @@ def register_user(name, email, password, admin=False, verified=False):
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     # Create new user
-    new_user = User(name=name, email=email, password=hashed_pw, admin=admin, verified=verified)
+    new_user = User(name=name, email=email, password=hashed_pw, admin=admin, avatar_url=avatar_url, verified=verified)
     session.add(new_user)
     session.commit()
 

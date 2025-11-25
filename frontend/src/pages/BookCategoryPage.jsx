@@ -1,12 +1,40 @@
-import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import NavigateComponenet from "../components/NavigateComponent";
-import LogoutButton from "../components/LogoutButton";
+import { useContext, useEffect, useState } from "react";
+import { replace, useNavigate } from "react-router-dom";
 import CheckBox from "../components/CheckBox";
 import DropDown from "../components/DropDown";
 import Button from "../components/Button";
 import { Context } from "../context/ContextProvider";
-import { Sparkle } from "lucide-react";
+import { Sparkle, ChevronDown, ChevronUp } from "lucide-react";
+import Header from "../components/Header";
+
+const CollapsibleCard = ({
+    title,
+    description,
+    children,
+    defaultOpen = false,
+}) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+
+    return (
+        <div className="border border-[#522614]/20 rounded-lg overflow-hidden">
+            <div
+                className="flex justify-between items-center bg-[#f8f5f2] p-4 cursor-pointer"
+                onClick={() => setIsOpen((prev) => !prev)}
+            >
+                <div>
+                    <h2 className="text-[#B9562D] inter-medium text-xl">
+                        {title}
+                    </h2>
+                    {description && (
+                        <p className="text-[#522614]">{description}</p>
+                    )}
+                </div>
+                {isOpen ? <ChevronUp /> : <ChevronDown />}
+            </div>
+            {isOpen && <div className="p-4">{children}</div>}
+        </div>
+    );
+};
 
 const BookCategoryPage = () => {
     const {
@@ -48,24 +76,26 @@ const BookCategoryPage = () => {
         );
     };
 
-    const sectionClass =
-        "flex flex-col gap-2.5 pb-6 border-b border-b-[#522614]/20";
-    const headingClass = "text-[#B9562D] inter-medium text-2xl";
-    const paragraphClass = "text-[#522614]";
-
     return (
-        <div className="flex flex-col items-center justify-center w-screen h-screen bg-cover bg-no-repeat bg-[url('./assets/cover.png')] p-6">
-            <NavigateComponenet step={2} path="/" />
-            <LogoutButton />
+        <div className="flex flex-col items-center w-full h-screen ">
+            <Header
+                step={2}
+                path="/"
+                steps={[
+                    "Add liked books",
+                    "Enter your preferences",
+                    "Get Recommendations",
+                ]}
+            />
 
-            <div className="flex flex-col gap-8 max-w-[900px] w-full">
+            <div className="flex flex-col gap-4 p-[50px] w-full">
                 {/* Favourite Genres */}
-                <div className={sectionClass}>
-                    <h2 className={headingClass}>Favourite Genres</h2>
-                    <p className={paragraphClass}>
-                        Select your favourite genres
-                    </p>
-                    <div className="grid grid-cols-4 gap-x-7 gap-y-4 mt-4">
+                <CollapsibleCard
+                    title="Favourite Genres"
+                    description="Select your favourite genres"
+                    defaultOpen={true} // open by default
+                >
+                    <div className="grid grid-cols-6 gap-x-7 gap-y-4">
                         {favGenresList.map((c, i) => (
                             <CheckBox
                                 key={i}
@@ -75,38 +105,36 @@ const BookCategoryPage = () => {
                             />
                         ))}
                     </div>
-                </div>
+                </CollapsibleCard>
 
                 {/* Preferred Mood */}
-                <div className={sectionClass}>
-                    <h2 className={headingClass}>Preferred Mood</h2>
+                <CollapsibleCard title="Preferred Mood" defaultOpen={false}>
                     <DropDown
+                        searchable
+                        showLimit={7}
                         options={preferredMoodList}
                         selectedOption={preferredMood}
                         onSelect={(option) => setPreferredMood(option)}
                         placeholder="Select a mood"
                     />
-                </div>
+                </CollapsibleCard>
 
                 {/* Books Length */}
-                <div className={sectionClass}>
-                    <h2 className={headingClass}>Books Length</h2>
+                <CollapsibleCard title="Books Length" defaultOpen={false}>
                     <DropDown
                         options={booksLengthList}
                         selectedOption={booksLength}
                         onSelect={(option) => setBooksLength(option)}
                         placeholder="Select length"
                     />
-                </div>
+                </CollapsibleCard>
 
-                {/* Number of Recommendations */}
-                <div className={sectionClass}>
-                    <h2 className={headingClass}>Recommendations Count</h2>
-                    <p className={paragraphClass}>
-                        How many book recommendations do you want. It will
-                        affect the amount of credits used.
-                    </p>
-
+                {/* Recommendations Count */}
+                <CollapsibleCard
+                    title="Recommendations Count"
+                    description="How many book recommendations do you want. It will affect the amount of credits used."
+                    defaultOpen={false}
+                >
                     <DropDown
                         options={recCountList.map((item) => item.label)}
                         selectedOption={recCount?.label}
@@ -119,16 +147,15 @@ const BookCategoryPage = () => {
                         }
                         placeholder="Select count"
                     />
-                </div>
+                </CollapsibleCard>
 
                 {/* Constraints */}
-                <div className={sectionClass}>
-                    <h2 className={headingClass}>Constraints</h2>
-                    <p className={paragraphClass}>
-                        Select your constraints for a more personalized
-                        recommendation
-                    </p>
-                    <div className="flex flex-wrap gap-4 mt-4">
+                <CollapsibleCard
+                    title="Constraints"
+                    description="Select your constraints for a more personalized recommendation"
+                    defaultOpen={false}
+                >
+                    <div className="flex flex-wrap gap-4">
                         {constraintsList.map((c, i) => (
                             <CheckBox
                                 key={i}
@@ -138,7 +165,7 @@ const BookCategoryPage = () => {
                             />
                         ))}
                     </div>
-                </div>
+                </CollapsibleCard>
             </div>
 
             {/* Get Recommendations Button */}
@@ -147,7 +174,9 @@ const BookCategoryPage = () => {
                     <Button
                         icon={<Sparkle />}
                         label="Get Recommendations"
-                        onClick={() => navigate("/recommendations")}
+                        onClick={() =>
+                            navigate("/recommendations", { replace: true })
+                        }
                     />
                 </div>
             )}

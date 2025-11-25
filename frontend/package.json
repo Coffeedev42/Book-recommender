@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/converter": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.13.2",
     "feather-icons": "^4.29.2",
@@ -17,6 +20,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-feather": "^2.0.10",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.6.3",
     "react-toastify": "^11.0.5",
     "tailwindcss": "^4.1.11",

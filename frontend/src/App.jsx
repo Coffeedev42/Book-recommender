@@ -4,10 +4,13 @@ import BookCategoryPage from "./pages/BookCategoryPage";
 import SigninPage from "./pages/SignInPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
     return (
         <div className="flex  inter  inter-regular">
+            <Toaster position="bottom-right" />
             <Routes>
                 <Route
                     path="/"
@@ -36,6 +39,7 @@ const App = () => {
                 />
 
                 <Route path="/login" element={<SigninPage />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </div>
     );

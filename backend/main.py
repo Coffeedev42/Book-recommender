@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify, make_response, render_template
+from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
+from flask_mail import Mail, Message
 from config import serializer
 from datetime import datetime,timedelta, timezone
-from flask_cors import CORS
 from auth import register_user, login_user, get_current_user
 from recommender import get_recommendations
 from db_config import session, User
@@ -15,11 +16,27 @@ from db_functions import (
     deduct_user_credit,
     get_user_credit
 )
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app,
      supports_credentials=True,
      origins=["http://localhost:5173"])
+
+# Mailjet SMTP settings
+app.config['MAIL_SERVER'] = 'in-v3.mailjet.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+
+
+app.config['MAIL_USERNAME'] = os.getenv('MAILJET_API_KEY')
+app.config['MAIL_PASSWORD'] = os.getenv('MAILJET_SECRET_KEY')
+
+mail = Mail(app)
 
 
 # Home Route
@@ -52,16 +69,19 @@ def dashboard():
 def register():
     data = request.json or {}
 
+    print(data)
+
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
+    avatar_url= data.get("avatar_url")
     admin = data.get("admin", False)  # Remove this in productions
     verified = data.get("verified", False) # Remove this in productions
 
-    if not (name and email and password):
+    if not (name and email and password and avatar_url):
         return jsonify({"error": "Missing required fields"}), 400
 
-    success, message = register_user(name, email, password, admin=admin, verified=verified)
+    success, message = register_user(name, email, password, avatar_url=avatar_url, admin=admin, verified=verified)
 
     if success:
         return jsonify({"success": message}), 200
@@ -108,13 +128,34 @@ def login():
     return jsonify({"error": user_or_message}), 400
 
 
+# Get user profile
+@app.route("/auth/profile", methods=["POST"])
+def get_profile():
+    user = get_current_user()
+    
+    if user:
+        profile = {
+            "user_id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "verified": user.verified,
+            "admin": user.admin,
+            "avatar_url": user.avatar_url,
+            "credit_limit": user.credit_limit
+        }
+        return jsonify({"authenticated": True, "profile": profile}), 200
+    
+    return jsonify({"authenticated": False}), 401
+
+
 # Check if logged in
-@app.route("/auth/check", methods=["GET"])
+@app.route("/auth/check", methods=["POST"])
 def auth_check():
     user = get_current_user()
     if user:
         return jsonify({"authenticated": True}), 200
     return jsonify({"authenticated": False}), 401
+
 
 # Logout
 @app.route("/logout", methods=["POST"])
@@ -422,6 +463,18 @@ def delete_book_list():
         return jsonify({"success": True, "message" :  f"Deleted list {list_id}"}), 200
 
     return jsonify({"error": f"List '{list_id}' not found"}), 404
+
+
+@app.route("/test-email")
+def test_email():
+    msg = Message(
+        "Mailjet Test Email",
+        sender="ui.yazir@gmail.com",
+        recipients=["yazfeatz@gmail.com"],
+        body="Hello! If you received this, Mailjet is working."
+    )
+    mail.send(msg)
+    return "Email sent!"
 
 
 
