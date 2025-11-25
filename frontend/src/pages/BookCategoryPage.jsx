@@ -88,7 +88,7 @@ const BookCategoryPage = () => {
                 ]}
             />
 
-            <div className="flex flex-col gap-4 p-[50px] w-full">
+            <div className="flex flex-col gap-4 p-[50px] pt-30 w-full">
                 {/* Favourite Genres */}
                 <CollapsibleCard
                     title="Favourite Genres"
@@ -170,7 +170,7 @@ const BookCategoryPage = () => {
 
             {/* Get Recommendations Button */}
             {addedBooks?.length >= 3 && (
-                <div className="mt-6">
+                <div className="my-6">
                     <Button
                         icon={<Sparkle />}
                         label="Get Recommendations"

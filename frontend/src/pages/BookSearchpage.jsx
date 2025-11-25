@@ -124,9 +124,9 @@ const BookSearchPage = () => {
                 ]}
             />
 
-            <div className="w-full h-full grid grid-cols-2 bg-white">
+            <div className="w-full h-screen grid grid-cols-2 bg-white over">
                 {/* Search Section */}
-                <div className="flex p-[50px] flex-col gap-[20px] w-full h-full max-h-full border-r-1 border-gray-200">
+                <div className="flex p-[50px] pt-30 flex-col gap-[20px] w-full h-full max-h-full border-r-1 border-gray-200">
                     <div className="flex flex-col gap-[15px]">
                         <div>
                             <img src={Logo} className="h-20" alt="" />
@@ -134,7 +134,7 @@ const BookSearchPage = () => {
                         <h2 className="font-medium text-[#C24000] text-2xl">
                             Think of Fred as your personal librarian.
                         </h2>
-                        <p className="text-[#522614]">
+                        <p className="text-[#522614] max-w-[80%]">
                             Add at least five books you've recently enjoyed.
                             Fred will use them to tailor your recommendations.
                             You can also include your all-time favourites.
@@ -195,7 +195,7 @@ const BookSearchPage = () => {
                         {!closeSearchPopup && (
                             <div
                                 ref={searchRef}
-                                className="flex w-[500px] flex-1 overflow-hidden max-h-[605px] flex-col gap-2"
+                                className="flex w-[500px] flex-1 overflow-hidden max-h-[500px] flex-col gap-2"
                             >
                                 {searchResult ? (
                                     searchResult.map(
@@ -232,7 +232,7 @@ const BookSearchPage = () => {
                 </div>
 
                 {/* BookContainer merged inline */}
-                <div className="w-full h-full p-[50px]">
+                <div className="w-full h-full p-[50px] pt-30">
                     <div className="flex flex-col relative gap-2 w-full">
                         {addedBooks.length > 0 && (
                             <div className="flex w-full">

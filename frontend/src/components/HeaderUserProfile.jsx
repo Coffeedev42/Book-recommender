@@ -14,6 +14,7 @@ function HeaderUserProfile({ className }) {
 
     return (
         <div className={`flex items-center gap-2.5 ${className}`}>
+            {profile.admin && <p>Admin</p>}
             <img
                 src={profile.avatar_url}
                 className="h-14 pr-2 border-r-1 border-gray-200"
@@ -26,9 +27,7 @@ function HeaderUserProfile({ className }) {
                     className="flex items-center gap-0.5 text-[#E48534]"
                 >
                     <img src={Credit} className="h-5 " alt="" />
-                    <p className="text-sm">
-                        {profile.credit_limit || "loading..."}
-                    </p>
+                    <p className="text-sm">{profile.credit_limit}</p>
                 </div>
             </div>
             <LogoutButton />

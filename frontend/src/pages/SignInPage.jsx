@@ -101,6 +101,7 @@ const SigninPage = () => {
                     {signinMethod === "Login" ? (
                         <>
                             <Input
+                                autofocus={true}
                                 value={loginValues.email}
                                 type="email"
                                 placeholder="Enter your email"
@@ -150,6 +151,7 @@ const SigninPage = () => {
                             </div>
 
                             <Input
+                                autofocus={true}
                                 value={registerValues.name}
                                 type="text"
                                 placeholder="Enter your full name"
