@@ -8,7 +8,7 @@ const VerifyEmailPage = () => {
     const navigate = useNavigate();
     const [status, setStatus] = useState("verifying");
     const [message, setMessage] = useState("");
-    const [countdown, setCountdown] = useState(5);
+    const [countdown, setCountdown] = useState(10);
 
     useEffect(() => {
         const verify = async () => {
