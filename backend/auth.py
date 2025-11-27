@@ -1,7 +1,9 @@
-from flask import request
+from flask import request, url_for
 from db_config import session, User
 import bcrypt
 from config import serializer
+from extensions import mail
+from flask_mail import Message
 
 
 def register_user(name, email, password, avatar_url, admin=False, verified=False):
@@ -20,11 +22,25 @@ def register_user(name, email, password, avatar_url, admin=False, verified=False
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     # Create new user
+    # Force verified=False for new registrations unless explicitly overridden (e.g. by admin or tests)
     new_user = User(name=name, email=email, password=hashed_pw, admin=admin, avatar_url=avatar_url, verified=verified)
     session.add(new_user)
     session.commit()
 
-    return True, f"User {email} registered successfully"
+    # Send verification email
+    try:
+        token = serializer.dumps(email, salt='email-confirm')
+        link = url_for('auth.verify_email', token=token, _external=True)
+        
+        msg = Message('Confirm Your Email', sender='ui.yazir@gmail.com', recipients=[email])
+        msg.body = f'Your link is {link}'
+        mail.send(msg)
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        # Ideally we might want to rollback or mark user as needing email resend, 
+        # but for now we proceed and user can request resend later.
+
+    return True, f"User {email} registered successfully. Please check your email to verify."
 
 
 def login_user(email, password):
@@ -41,6 +57,9 @@ def login_user(email, password):
 
     if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         return False, "Invalid email or password"
+
+    if not user.verified:
+        return False, "Email not verified"
 
     return True, user
 

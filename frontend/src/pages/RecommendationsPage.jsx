@@ -4,14 +4,11 @@ import BookArticle from "../components/BookArticle";
 import { Context } from "../context/ContextProvider";
 import Loader from "../assets/loader.gif";
 import Error from "../assets/sad-face.png";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import toast from "react-hot-toast";
-import { GetUserProfile } from "../functions";
-import { GetBookRecommendations } from "../functions";
-import { Link } from "lucide-react";
-import Button from "../components/Button";
+import { getProfile } from "../api/auth";
+import { getRecommendations } from "../api/books";
 
 const RecommendationsPage = () => {
     const [loading, setLoading] = useState(true);
@@ -32,58 +29,70 @@ const RecommendationsPage = () => {
 
     const navigate = useNavigate();
 
-    const GetRecommendations = async () => {
+    const fetchRecommendations = async () => {
         setLoading(true);
-        await GetUserProfile(setProfile);
-        const userProfile = await GetUserProfile(setProfile);
 
-        if (addedBooks.length === 0) {
-            setLoading(false);
-            toast.error("No liked books found. Please add some first.");
-            navigate("/", { replace: true });
-            return;
-        }
+        try {
+            const profileData = await getProfile();
+            setProfile(profileData.profile);
+            const userProfile = profileData.profile;
 
-        if (userProfile.credit_limit < recCount.credits) {
-            setLoading(false);
-            toast.error("Not enough credits. Add credits first.");
+            if (addedBooks.length === 0) {
+                setLoading(false);
+                toast.error("No liked books found. Please add some first.");
+                navigate("/", { replace: true });
+                return;
+            }
+
+            if (userProfile.credit_limit < recCount.credits) {
+                setLoading(false);
+                toast.error("Not enough credits. Add credits first.");
+                setError(true);
+                setErrorMessage("Insufficient Credits. Please Add Credits");
+                return;
+            }
+
+            const addedBookTitles = addedBooks.map(
+                (b) => `${b.title} by ${b.author[0]}`
+            );
+
+            const bookProfile = {
+                likedBooks: addedBookTitles,
+                favoriteGenres: favGenres,
+                preferredMood,
+                booksLength,
+                constraints,
+            };
+            const count = recCount.count;
+
+            const response = await getRecommendations(bookProfile, count);
+
+            if (response && response.results && response.results.length > 0) {
+                setRecommendedBooks(response.results);
+                setError(false);
+                toast.success("Recommendations are ready!");
+
+                // Refresh profile to show updated credits
+                const updatedProfile = await getProfile();
+                setProfile(updatedProfile.profile);
+            } else {
+                setError(true);
+                setErrorMessage("Generating Failed. Please Try Again!");
+                toast.error("Failed to generate recommendations.");
+            }
+
+        } catch (err) {
+            console.error(err);
             setError(true);
-            setErrorMessage("Insufficient Credits. Please Add Credits");
-            return;
+            setErrorMessage(err.response?.data?.message || "Failed to generate recommendations.");
+            toast.error(err.response?.data?.message || "Failed to generate recommendations.");
+        } finally {
+            setLoading(false);
         }
-
-        const addedBookTitles = addedBooks.map(
-            (b) => `${b.title} by ${b.author[0]}`
-        );
-
-        const bookProfile = {
-            likedBooks: addedBookTitles,
-            favoriteGenres: favGenres,
-            preferredMood,
-            booksLength,
-            constraints,
-        };
-        const count = recCount.count;
-
-        const response = await GetBookRecommendations(bookProfile, count);
-
-        if (response?.success) {
-            setRecommendedBooks(response.books);
-            setError(false);
-            toast.success(response.message);
-            console.log(response.books);
-            await GetUserProfile(setProfile);
-        } else {
-            setError(true);
-            setErrorMessage("Generating Failed. Please Try Again!");
-            toast.error(response.message);
-        }
-
-        setLoading(false);
     };
 
     useEffect(() => {
-        GetRecommendations();
+        fetchRecommendations();
     }, []);
 
     return (

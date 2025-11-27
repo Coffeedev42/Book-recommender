@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import BookSearchPage from "./pages/BookSearchPage";
 import BookCategoryPage from "./pages/BookCategoryPage";
 import SigninPage from "./pages/SignInPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -39,6 +40,7 @@ const App = () => {
                 />
 
                 <Route path="/login" element={<SigninPage />} />
+                <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </div>

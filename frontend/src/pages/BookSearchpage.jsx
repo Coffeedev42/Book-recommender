@@ -11,7 +11,7 @@ import Placeholder from "../assets/book-placeholder.png";
 import BookIcon from "../assets/book-icon.png";
 import Logo from "../assets/logo.png";
 import Header from "../components/Header";
-import { GetUserProfile } from "../functions";
+import { getProfile } from "../api/auth";
 
 const BookSearchPage = () => {
     const {
@@ -45,7 +45,16 @@ const BookSearchPage = () => {
     }, []);
 
     useEffect(() => {
-        GetUserProfile(setProfile);
+        const fetchProfile = async () => {
+            try {
+                const data = await getProfile();
+                setProfile(data.profile);
+            } catch (error) {
+                console.error("Failed to fetch profile", error);
+            }
+        };
+        fetchProfile();
+
         if (debouncedSearchTerm) {
             fetchBooks(debouncedSearchTerm);
             setCloseSearchPopup(false);
@@ -213,8 +222,8 @@ const BookSearchPage = () => {
                                                     img={
                                                         r.volumeInfo?.imageLinks
                                                             ? r.volumeInfo
-                                                                  ?.imageLinks
-                                                                  .thumbnail
+                                                                ?.imageLinks
+                                                                .thumbnail
                                                             : Placeholder
                                                     }
                                                     bordered={false}
@@ -242,9 +251,8 @@ const BookSearchPage = () => {
                             </div>
                         )}
                         <div
-                            className={`grid grid-cols-2 flex-1 overflow-hidden gap-[10px] ${
-                                hide && "opacity-0"
-                            }`}
+                            className={`grid grid-cols-2 flex-1 overflow-hidden gap-[10px] ${hide && "opacity-0"
+                                }`}
                         >
                             {addedBooks.length > 0 ? (
                                 addedBooks.map((item, key) => (

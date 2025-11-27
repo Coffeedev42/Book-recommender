@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
+import { checkAuth } from "../api/auth";
 
 const ProtectedRoute = ({ children }) => {
     const [authState, setAuthState] = useState("checking");
     // "checking" | "authenticated" | "unauthorized"
 
     useEffect(() => {
-        axios
-            .post(
-                "http://localhost:5000/auth/check",
-                {},
-                {
-                    withCredentials: true,
-                }
-            )
+        checkAuth()
             .then(() => setAuthState("authenticated"))
             .catch(() => setAuthState("unauthorized"));
     }, []);

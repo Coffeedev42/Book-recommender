@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SiginToggleComponent from "../components/SiginToggleComponent";
 import Input from "../components/Input";
-import axios from "axios";
+import { login, register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { EyeIcon } from "lucide-react";
@@ -49,20 +49,19 @@ const SigninPage = () => {
         }
 
         try {
-            const URL = "http://localhost:5000/register";
-            const response = await axios.post(URL, registerValues);
+            await register(registerValues);
 
-            if (response.status === 200) {
-                setRegisterValues({
-                    name: "",
-                    email: "",
-                    password: "",
-                    comfirm_password: "",
-                    avatar_url: "",
-                });
-                toast.success("Registered successfully! Please login.");
-                setSiginMethod("Login");
-            }
+            setRegisterValues({
+                name: "",
+                email: "",
+                password: "",
+                comfirm_password: "",
+                avatar_url: avatars[0].url, // Reset to default avatar, not empty string
+            });
+            toast.success("Registration successful! A verification email has been sent to your inbox.", {
+                duration: 5000,
+            });
+            setSiginMethod("Login");
         } catch (error) {
             // Handle backend errors
             const message =
@@ -74,20 +73,24 @@ const SigninPage = () => {
 
     const handleLogin = async () => {
         try {
-            const URL = "http://localhost:5000/login";
-            await axios.post(URL, loginValues, { withCredentials: true });
+            await login(loginValues.email, loginValues.password);
             toast.success("Login successful!");
             navigate("/", { replace: true }); // replace prevents back navigation
         } catch (error) {
             const message =
-                error.response?.data?.message ||
+                error.response?.data?.error || // Backend returns "error" key
                 "Login failed. Check your credentials.";
-            toast.error(message);
+
+            if (message === "Email not verified") {
+                toast.error("Please verify your email before logging in.");
+            } else {
+                toast.error(message);
+            }
         }
     };
 
     return (
-        <div className="flex bg-gray-100 w-[100vw] items-center justify-center flex-col h-[100vh]">
+        <div className="flex bg-gray-100 w-full items-center justify-center flex-col h-screen">
             <div className="flex flex-col h-[400px] w-[440px] max-w-[440px] gap-[30px]">
                 <SiginToggleComponent
                     setMethod={setSiginMethod}
@@ -141,11 +144,10 @@ const SigninPage = () => {
                                             });
                                         }}
                                         className={`w-16 h-16 rounded-full cursor-pointer transition ease-in 
-                                        ${
-                                            registerValues.avatar_url === url
+                                        ${registerValues.avatar_url === url
                                                 ? "bg-[#ff915b] p-0"
                                                 : "bg-transparent p-2"
-                                        }`}
+                                            }`}
                                     />
                                 ))}
                             </div>
