@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import BookSearchPage from "./pages/BookSearchPage";
 import BookCategoryPage from "./pages/BookCategoryPage";
@@ -9,6 +10,20 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
+    // Prevent browser back/forward navigation globally
+    useEffect(() => {
+        window.history.pushState(null, "", window.location.href);
+        const handlePopState = () => {
+            window.history.pushState(null, "", window.location.href);
+        };
+
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, []);
+
     return (
         <div className="flex  inter  inter-regular">
             <Toaster position="bottom-right" />
