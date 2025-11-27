@@ -127,6 +127,7 @@ def register_user(name, email, password, avatar_url, admin=False, verified=False
         <body>
             <div class="container">
                 <div class="header">
+                    <img src="https://i.postimg.cc/9Q69X4ZG/fred-logo.png" class="logo" style="width: 120px; height: auto; margin: 0 auto;" />
                     <h1 class="header-text">Fred.ai</h1>
                     <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px;">Your Personal Book Recommender</p>
                 </div>
