@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { verifyEmail } from "../api/auth";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { XCircle, Loader2 } from "lucide-react";
+import VerifiedBadge from "../assets/verify.png"
 
 const VerifyEmailPage = () => {
     const { token } = useParams();
@@ -55,9 +56,8 @@ const VerifyEmailPage = () => {
 
                 {status === "success" && (
                     <>
-                        <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                        <h1 className="text-2xl font-bold mb-2 text-green-600">Email Successfully Verified!</h1>
-                        <p className="text-gray-700 mb-4">{message}</p>
+                        <img src={VerifiedBadge} alt="Verified" className="w-16 h-16 mx-auto mb-4" />
+                        <h1 className="text-2xl font-bold mb-2 text-[#D55414]">Email Successfully Verified!</h1>
                         <p className="text-sm text-gray-500 mb-6">
                             Redirecting to login in {countdown} second{countdown !== 1 ? 's' : ''}...
                         </p>
