@@ -40,9 +40,8 @@ const BookArticle = ({
             setFetchDone(false);
 
             try {
-                const query = `${title.replace(/\s+/g, "+")}${
-                    author ? `+inauthor:${author.replace(/\s+/g, "+")}` : ""
-                }`;
+                const query = `${title.replace(/\s+/g, "+")}${author ? `+inauthor:${author.replace(/\s+/g, "+")}` : ""
+                    }`;
 
                 const response = await fetch(
                     `https://www.googleapis.com/books/v1/volumes?q=${query}`
@@ -128,16 +127,20 @@ const BookArticle = ({
                     <img
                         src={bookCover || (fetchDone ? CoverPlaceholder : null)}
                         alt="book-cover"
-                        className={`h-full w-full object-cover p-1 border border-[var(--stroke)] rounded-md ${
-                            isLoadingCover ? "hidden" : "block"
-                        }`}
+                        className={`h-full w-full object-cover p-1 border border-[var(--stroke)] rounded-md ${isLoadingCover ? "hidden" : "block"
+                            }`}
                         onLoad={() => setIsLoadingCover(false)}
                         onError={() => setIsLoadingCover(false)}
                     />
                 </div>
 
                 <div className="flex flex-col justify-center gap-[10px]">
-                    <div className="bg-[#00B330] items-center justify-center flex w-[45px] text-white h-[25px] rounded-sm">
+                    <div className={`items-center justify-center flex w-[50px] text-white h-[25px] rounded-sm ${parseFloat(ratings) > 7.0
+                        ? 'bg-[#00B330]' // Green for ratings > 7.5
+                        : parseFloat(ratings) > 5
+                            ? 'bg-[#FFA500]' // Yellow/Orange for ratings > 5
+                            : 'bg-[#FF4444]' // Red for ratings <= 5
+                        }`}>
                         <p className="text-[12px]">{ratings}</p>
                     </div>
 
