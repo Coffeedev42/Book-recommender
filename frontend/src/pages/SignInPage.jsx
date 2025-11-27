@@ -3,13 +3,14 @@ import SiginToggleComponent from "../components/SiginToggleComponent";
 import Input from "../components/Input";
 import { login, register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const SigninPage = () => {
     const [signinMethod, setSiginMethod] = useState("Login");
     const navigate = useNavigate();
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     const avatars = [
         {
@@ -34,7 +35,7 @@ const SigninPage = () => {
         email: "",
         password: "",
         comfirm_password: "",
-        avatar_url: avatars[0].url, // ✅ new field
+        avatar_url: avatars[0].url,
     });
 
     const [loginValues, setLoginValues] = useState({
@@ -48,6 +49,7 @@ const SigninPage = () => {
             return;
         }
 
+        setIsRegistering(true);
         try {
             await register(registerValues);
 
@@ -56,29 +58,31 @@ const SigninPage = () => {
                 email: "",
                 password: "",
                 comfirm_password: "",
-                avatar_url: avatars[0].url, // Reset to default avatar, not empty string
+                avatar_url: avatars[0].url,
             });
             toast.success("Registration successful! A verification email has been sent to your inbox.", {
                 duration: 5000,
             });
             setSiginMethod("Login");
         } catch (error) {
-            // Handle backend errors
             const message =
                 error.response?.data?.message ||
                 "Registration failed. Try again.";
             toast.error(message);
+        } finally {
+            setIsRegistering(false);
         }
     };
 
     const handleLogin = async () => {
+        setIsLoggingIn(true);
         try {
             await login(loginValues.email, loginValues.password);
             toast.success("Login successful!");
-            navigate("/", { replace: true }); // replace prevents back navigation
+            navigate("/", { replace: true });
         } catch (error) {
             const message =
-                error.response?.data?.error || // Backend returns "error" key
+                error.response?.data?.error ||
                 "Login failed. Check your credentials.";
 
             if (message === "Email not verified") {
@@ -86,6 +90,8 @@ const SigninPage = () => {
             } else {
                 toast.error(message);
             }
+        } finally {
+            setIsLoggingIn(false);
         }
     };
 
@@ -127,7 +133,14 @@ const SigninPage = () => {
                                 }
                                 icon={<EyeIcon />}
                             />
-                            <Button label="Login" onClick={handleLogin} />
+                            <button
+                                onClick={handleLogin}
+                                disabled={isLoggingIn}
+                                className="w-full bg-[#D55414] text-white py-3 rounded-lg font-medium hover:bg-[#B9562D] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isLoggingIn && <Loader2 className="w-4 h-4 animate-spin" />}
+                                {isLoggingIn ? "Logging in..." : "Login"}
+                            </button>
                         </>
                     ) : (
                         <>
@@ -196,7 +209,14 @@ const SigninPage = () => {
                                     })
                                 }
                             />
-                            <Button onClick={handleRegister} label="Register" />
+                            <button
+                                onClick={handleRegister}
+                                disabled={isRegistering}
+                                className="w-full bg-[#D55414] text-white py-3 rounded-lg font-medium hover:bg-[#B9562D] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isRegistering && <Loader2 className="w-4 h-4 animate-spin" />}
+                                {isRegistering ? "Registering..." : "Register"}
+                            </button>
                         </>
                     )}
                 </form>
