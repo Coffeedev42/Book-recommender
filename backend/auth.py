@@ -30,7 +30,8 @@ def register_user(name, email, password, avatar_url, admin=False, verified=False
     # Send verification email
     try:
         token = serializer.dumps(email, salt='email-confirm')
-        link = url_for('auth.verify_email', token=token, _external=True)
+        # Point to frontend verification page, not backend API
+        link = f"http://localhost:5173/verify-email/{token}"
         
         msg = Message('Fred.ai - Verify Your Email', sender='ui.yazir@gmail.com', recipients=[email])
         

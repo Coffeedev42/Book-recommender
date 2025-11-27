@@ -56,11 +56,17 @@ const VerifyEmailPage = () => {
                 {status === "success" && (
                     <>
                         <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                        <h1 className="text-2xl font-bold mb-2 text-green-600">Account Verified!</h1>
+                        <h1 className="text-2xl font-bold mb-2 text-green-600">Email Successfully Verified!</h1>
                         <p className="text-gray-700 mb-4">{message}</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 mb-6">
                             Redirecting to login in {countdown} second{countdown !== 1 ? 's' : ''}...
                         </p>
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="bg-[#D55414] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#B9562D] transition"
+                        >
+                            Login Now
+                        </button>
                     </>
                 )}
 
