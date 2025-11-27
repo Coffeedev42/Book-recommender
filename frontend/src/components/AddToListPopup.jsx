@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../context/ContextProvider";
 import axios from "axios";
 import NoDataImage from "../assets/list.png";
+import toast from "react-hot-toast";
 
 const AddToListPopup = () => {
     const popupRef = useRef(null);
@@ -29,6 +30,7 @@ const AddToListPopup = () => {
 
     const createBookList = async () => {
         if (!newListName.trim()) {
+            toast.error("List name cannot be empty.");
             setError("List name cannot be empty.");
             return;
         }
@@ -42,9 +44,12 @@ const AddToListPopup = () => {
             getBookLists();
             setNewListName("");
             setError(null);
+            toast.success(`List "${newListName}" created successfully!`);
         } catch (err) {
             console.error("Creating failed:", err);
-            setError("Failed to create list. Please try again.");
+            const errorMsg = "Failed to create list. Please try again.";
+            setError(errorMsg);
+            toast.error(errorMsg);
         }
     };
 
@@ -83,9 +88,12 @@ const AddToListPopup = () => {
             const URL = "http://localhost:5000/lists/delete";
             await axios.post(URL, { list_id }, { withCredentials: true });
             getBookLists();
+            toast.success("List deleted successfully!");
         } catch (err) {
             console.error("Deleting list failed:", err);
-            setError("Failed to delete list. Please try again.");
+            const errorMsg = "Failed to delete list. Please try again.";
+            setError(errorMsg);
+            toast.error(errorMsg);
         }
     };
 
